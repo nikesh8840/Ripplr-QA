@@ -35,8 +35,8 @@ This is an industry-grade QA Automation Framework built using [Playwright](https
 
 ```bash
 # Clone the repo
-git clone https://github.com/your-org/qa-automation.git
-cd qa-automation
+git clone https://github.com/bipinyct-infinite-locus/qa-automation-playwright.git
+cd qa-automation-playwright
 
 # Install dependencies
 npm install
