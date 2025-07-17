@@ -1,0 +1,17 @@
+
+{
+  "name": "qa-automation",
+  "version": "1.0.0",
+  "description": "Playwright JS automation framework for company QA",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "test:report": "npx playwright show-report",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.44.0",
+    "dotenv": "^16.3.1",
+    "eslint": "^8.56.0"
+  }
+}
