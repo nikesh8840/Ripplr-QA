@@ -1,5 +1,7 @@
-node_modules/
+node_modules
 .env
-reports/
-screenshots/
-videos/
+reports
+screenshots
+videos
+test-results
+playwright.config.js

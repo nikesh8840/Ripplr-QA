@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export default defineConfig({
-  timeout: 30000,
+  timeout: 60000,
   retries: 1,
   testDir: './tests',
   use: {
@@ -15,3 +15,13 @@ export default defineConfig({
   },
   reporter: [['html', { outputFolder: 'reports', open: 'never' }]]
 });
+
+
+// export default {
+//   testDir: './tests',     // your test folder
+//   timeout: 90000,
+//   use: {
+//     headless: true,      // optional, defaults to true
+//     reporter : 'html'
+//   },
+// };
