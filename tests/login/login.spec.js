@@ -1,11 +1,13 @@
+const { test, expect } = require('@playwright/test');
+const { LoginPage } = require('../../pages/loginPage');
+const { DashboardPage } = require('../../pages/dashboardPage');
+const config = require('../../config/config');
 
-import { test, expect } from '@playwright/test';
-import { LoginPage } from '../../pages/login.page';
-import data from '../../test-data/loginData.json';
+test('Login with valid credentials', async ({ page }) => {
+    const loginPage = new LoginPage(page);
+    const dashboardPage = new DashboardPage(page);
 
-test('User can login with valid credentials', async ({ page }) => {
-  const loginPage = new LoginPage(page);
-  await page.goto('/');
-  await loginPage.login(data.valid.username, data.valid.password);
-  await expect(page).toHaveURL(/dashboard/);
+    await page.goto(config.baseURL);
+    await loginPage.login(config.credentials.username, config.credentials.password);
+    expect(await dashboardPage.isDashboardLoaded()).toBeTruthy();
 });
