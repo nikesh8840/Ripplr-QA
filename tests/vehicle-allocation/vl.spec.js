@@ -19,8 +19,8 @@ test('test', async ({ page }) => {
   await page.getByRole('button', { name: 'Search' }).click();
   await page.getByRole('listitem', { name: '2' }).locator('a').click();
   await page.locator('.ant-checkbox').nth(8).click();
-  await page.locator('.ant-checkbox').nth(9).click();
-  await page.locator('.ant-checkbox').nth(10).click();
+  // await page.locator('.ant-checkbox').nth(9).click();
+  // await page.locator('.ant-checkbox').nth(10).click();
   await page.getByRole('button', { name: 'Allocate Vehicle' }).click();
   await page.locator('.ant-form-item-control-input-content').first().click();
   await page.getByTitle('Both').locator('div').click();
