@@ -3,3 +3,5 @@ node_modules/
 reports/
 screenshots/
 videos/
+test-results/
+test-data/
