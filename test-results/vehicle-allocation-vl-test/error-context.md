@@ -1,0 +1,249 @@
+# Page snapshot
+
+```yaml
+- navigation:
+  - img "home"
+  - menu:
+    - menuitem "Dashboard":
+      - img
+      - link "Dashboard":
+        - /url: /dashboard
+    - menuitem "Order Management":
+      - img
+      - text: Order Management
+    - menuitem "Logistics Management" [expanded]:
+      - img
+      - text: Logistics Management
+    - list:
+      - menuitem "Delivery Allocation":
+        - img
+        - link "Delivery Allocation":
+          - /url: /logistics-management/delivery-allocation
+      - menuitem "Return To Fc":
+        - img
+        - link "Return To Fc":
+          - /url: /logistics-management/return-to-fc-new
+    - menuitem "Warehouse Management":
+      - img
+      - text: Warehouse Management
+    - menuitem "Onboarding":
+      - img
+      - text: Onboarding
+    - menuitem "Finance Management":
+      - img
+      - text: Finance Management
+    - menuitem "Cheque Bounce":
+      - img
+      - text: Cheque Bounce
+    - menuitem "Adapter Uploads":
+      - img
+      - link "Adapter Uploads":
+        - /url: /adapter-uploads
+    - menuitem "Downloads":
+      - img
+      - link "Downloads":
+        - /url: /downloads
+    - menuitem "Collection Automation":
+      - img
+      - link "Collection Automation":
+        - /url: /collection-automation
+  - button "left Collapse":
+    - img "left"
+    - text: Collapse
+- paragraph: sdf
+- link "home":
+  - /url: /dashboard
+  - img "home"
+- text: ">"
+- link "Logistics Management":
+  - /url: /logistics-management
+- text: ">"
+- link "Delivery Allocation":
+  - /url: /logistics-management/delivery-allocation
+- text: admin admin admin@ripplr.in aa
+- paragraph: Search
+- img "search icon"
+- textbox "Search search icon"
+- paragraph: FC(s)
+- combobox "FC(s) Select FC(s)"
+- text: Select FC(s)
+- paragraph: Brands
+- combobox "Brands"
+- paragraph: Select Date
+- textbox "Select Date calendar"
+- img "calendar"
+- button "Search"
+- button "Create Delivery Allocation":
+  - img
+  - text: Create Delivery Allocation
+- table:
+  - rowgroup:
+    - row "Vehicle No Allocated Date FC Vendor Driver Name Delivery Boy Status Total order Full/Partial Delivery Cancelled Attempted Pending INV":
+      - cell "Vehicle No"
+      - cell "Allocated Date"
+      - cell "FC"
+      - cell "Vendor"
+      - cell "Driver Name"
+      - cell "Delivery Boy"
+      - cell "Status"
+      - cell "Total order"
+      - cell "Full/Partial Delivery"
+      - cell "Cancelled"
+      - cell "Attempted"
+      - cell "Pending"
+      - cell
+      - cell "INV"
+  - rowgroup:
+    - row:
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+    - row:
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+    - row:
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+    - row:
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+    - row:
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+    - row:
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+    - row:
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+    - row:
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+    - row:
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+    - row:
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+      - cell
+- img "info-circle"
+- text: Orders have been allocated
+```

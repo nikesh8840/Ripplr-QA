@@ -1,0 +1,255 @@
+# Page snapshot
+
+```yaml
+- navigation:
+  - img "home"
+  - menu:
+    - menuitem "Dashboard":
+      - img
+      - link "Dashboard":
+        - /url: /dashboard
+    - menuitem "Order Management":
+      - img
+      - text: Order Management
+    - menuitem "Logistics Management" [expanded]:
+      - img
+      - text: Logistics Management
+    - list:
+      - menuitem "Delivery Allocation":
+        - img
+        - link "Delivery Allocation":
+          - /url: /logistics-management/delivery-allocation
+      - menuitem "Return To Fc":
+        - img
+        - link "Return To Fc":
+          - /url: /logistics-management/return-to-fc-new
+    - menuitem "Warehouse Management":
+      - img
+      - text: Warehouse Management
+    - menuitem "Onboarding":
+      - img
+      - text: Onboarding
+    - menuitem "Finance Management":
+      - img
+      - text: Finance Management
+    - menuitem "Cheque Bounce":
+      - img
+      - text: Cheque Bounce
+    - menuitem "Adapter Uploads":
+      - img
+      - link "Adapter Uploads":
+        - /url: /adapter-uploads
+    - menuitem "Downloads":
+      - img
+      - link "Downloads":
+        - /url: /downloads
+    - menuitem "Collection Automation":
+      - img
+      - link "Collection Automation":
+        - /url: /collection-automation
+  - button "left Collapse":
+    - img "left"
+    - text: Collapse
+- paragraph: sdf
+- link "home":
+  - /url: /dashboard
+  - img "home"
+- text: ">"
+- link "Logistics Management":
+  - /url: /logistics-management
+- text: ">"
+- link "Delivery Allocation":
+  - /url: /logistics-management/delivery-allocation
+- text: ">"
+- link "Create Delivery Allocation":
+  - /url: /logistics-management/delivery-allocation/create
+- text: admin admin admin@ripplr.in aa
+- paragraph: Search
+- img "search icon"
+- textbox "Search search icon"
+- paragraph: Salesmen(s)
+- combobox "Salesmen(s) Salesmen(s)"
+- text: Salesmen(s)
+- paragraph: Store(s)
+- combobox "Store(s) Store(s)"
+- text: Store(s)
+- paragraph: FC(s)
+- combobox "FC(s)" [expanded]:
+  - text: btml
+  - listbox:
+    - 'option "fccc: fcaaa"': "93"
+    - 'option "fcde: fcaa"': "92"
+- paragraph: Brands
+- combobox "Brands Select Brand(s)"
+- text: Select Brand(s)
+- paragraph: Search Tag(s)
+- textbox "Search Tag(s)"
+- paragraph: Search GST
+- textbox "Search GST"
+- paragraph: "Redelivery in future(count : 191)"
+- 'switch "Redelivery in future(count : 191)"'
+- button "Search"
+- button "Invoices Missing?"
+- text: Invoice Age All 60+ days
+- table:
+  - rowgroup:
+    - row "Invoice Date caret-up caret-down Invoice No caret-up caret-down Store Brand Invoice Amt FC Salesman":
+      - cell:
+        - checkbox
+      - cell
+      - cell "Invoice Date caret-up caret-down":
+        - text: Invoice Date
+        - img "caret-up"
+        - img "caret-down"
+      - cell "Invoice No caret-up caret-down":
+        - text: Invoice No
+        - img "caret-up"
+        - img "caret-down"
+      - cell "Store"
+      - cell "Brand"
+      - cell "Invoice Amt"
+      - cell "FC"
+      - cell "Salesman"
+      - cell
+  - rowgroup:
+    - row "30/05/2025 ZYTIN08164 AL-AMEEN STORE(708369801556) NESTLE ₹384 PLVM LOKESH":
+      - cell:
+        - checkbox [disabled]
+      - cell
+      - cell "30/05/2025"
+      - cell "ZYTIN08164"
+      - cell "AL-AMEEN STORE(708369801556)"
+      - cell "NESTLE"
+      - cell "₹384"
+      - cell "PLVM"
+      - cell "LOKESH"
+      - cell
+    - row "18/07/2025 TTFI992 Test Store(TC9) CSKAA ₹2,251 Test Fc admin":
+      - cell:
+        - checkbox
+      - cell
+      - cell "18/07/2025"
+      - cell "TTFI992"
+      - cell "Test Store(TC9)"
+      - cell "CSKAA"
+      - cell "₹2,251"
+      - cell "Test Fc"
+      - cell "admin"
+      - cell
+    - row "18/07/2025 TTFI989 Test Store(TC9) eeriplr ₹120 Test Fc admin":
+      - cell:
+        - checkbox
+      - cell
+      - cell "18/07/2025"
+      - cell "TTFI989"
+      - cell "Test Store(TC9)"
+      - cell "eeriplr"
+      - cell "₹120"
+      - cell "Test Fc"
+      - cell "admin"
+      - cell
+    - row "17/07/2025 TTFI978 Test Store(TC9) eeriplr ₹1,165 Test Fc admin":
+      - cell:
+        - checkbox
+      - cell
+      - cell "17/07/2025"
+      - cell "TTFI978"
+      - cell "Test Store(TC9)"
+      - cell "eeriplr"
+      - cell "₹1,165"
+      - cell "Test Fc"
+      - cell "admin"
+      - cell
+    - row "17/07/2025 TTFI977 Test Store(TC9) CSKAA ₹1,568 Test Fc admin":
+      - cell:
+        - checkbox
+      - cell
+      - cell "17/07/2025"
+      - cell "TTFI977"
+      - cell "Test Store(TC9)"
+      - cell "CSKAA"
+      - cell "₹1,568"
+      - cell "Test Fc"
+      - cell "admin"
+      - cell
+    - row "07/01/2025 Z240025690 Vijayalaxmi Store(KA-0112408) Britania ₹989 BTM RAVI D":
+      - cell:
+        - checkbox [disabled]
+      - cell
+      - cell "07/01/2025"
+      - cell "Z240025690"
+      - cell "Vijayalaxmi Store(KA-0112408)"
+      - cell "Britania"
+      - cell "₹989"
+      - cell "BTM"
+      - cell "RAVI D"
+      - cell
+    - row "07/01/2025 Z240025686 SHABARI BEKARY(KA-0030089) Britania ₹4,487 BTM Prakash G":
+      - cell:
+        - checkbox [disabled]
+      - cell
+      - cell "07/01/2025"
+      - cell "Z240025686"
+      - cell "SHABARI BEKARY(KA-0030089)"
+      - cell "Britania"
+      - cell "₹4,487"
+      - cell "BTM"
+      - cell "Prakash G"
+      - cell
+    - row "07/01/2025 Z240025683 RUCHI CONDIMENTS(KA-0137819) Britania ₹2,234 BTM Prakash G":
+      - cell:
+        - checkbox [disabled]
+      - cell
+      - cell "07/01/2025"
+      - cell "Z240025683"
+      - cell "RUCHI CONDIMENTS(KA-0137819)"
+      - cell "Britania"
+      - cell "₹2,234"
+      - cell "BTM"
+      - cell "Prakash G"
+      - cell
+    - row "07/01/2025 Z240025689 ayyapa bekry(KA-4725042) Britania ₹1,741 BTM Prakash G":
+      - cell:
+        - checkbox [disabled]
+      - cell
+      - cell "07/01/2025"
+      - cell "Z240025689"
+      - cell "ayyapa bekry(KA-4725042)"
+      - cell "Britania"
+      - cell "₹1,741"
+      - cell "BTM"
+      - cell "Prakash G"
+      - cell
+    - row "07/01/2025 Z240025685 Nandhi Keshwara Condiments(KA-0178913) Britania ₹3,408 BTM Prakash G":
+      - cell:
+        - checkbox [disabled]
+      - cell
+      - cell "07/01/2025"
+      - cell "Z240025685"
+      - cell "Nandhi Keshwara Condiments(KA-0178913)"
+      - cell "Britania"
+      - cell "₹3,408"
+      - cell "BTM"
+      - cell "Prakash G"
+      - cell
+- list:
+  - listitem "Previous Page":
+    - button "left" [disabled]:
+      - img "left"
+  - listitem "1"
+  - listitem "2"
+  - listitem "3"
+  - listitem "4"
+  - listitem "5"
+  - listitem "Next 5 Pages":
+    - img "double-right"
+    - text: •••
+  - listitem "500"
+  - listitem "Next Page":
+    - button "right":
+      - img "right"
+  - listitem:
+    - combobox "Page Size"
+    - text: 10 / page
+- text: "fccc: fcaaa fcde: fcaa avfc: avinashs_fcone fccf: fcfcfc fccj: fca fzxx: fcavonekkj fcco: fcavoneuu fcnc: fcn fcod: fcavone fccd: abcFC"
+```
