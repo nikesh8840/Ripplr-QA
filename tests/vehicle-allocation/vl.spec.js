@@ -41,5 +41,5 @@ test('test', async ({ page }) => {
   await page.locator('.ant-form-item-control-input-content input').last().fill('del');
   await page.getByTitle('Delivery Boy').locator('div').click(); 
   await page.getByRole('button', { name: 'Submit' }).click();
-  await page.waitForTimeout(5000);
+  await page.waitForTimeout(3000);
 });
