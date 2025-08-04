@@ -46,3 +46,5 @@ npm test
 
 # Show HTML Report
 npm run test:report
+
+npx playwright test tests/vehicle-allocation/dl.spec.js --headed                        
