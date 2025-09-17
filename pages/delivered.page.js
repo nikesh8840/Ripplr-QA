@@ -23,6 +23,7 @@ exports.DeliveredPage = class DeliveredPage {
         await this.page.getByRole('radio', { name: 'Invoice Returned' }).check();
         await this.page.getByRole('button', { name: 'right Collection Details:' }).click();
         await this.page.getByRole('button', { name: 'Update' }).click();
+        await this.page.waitForTimeout(1000);
         return true;
       } catch (err) {
         console.error('Delivered process failed:');

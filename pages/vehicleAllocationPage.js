@@ -16,23 +16,29 @@ exports.VehicleAllocationPage = class VehicleAllocationPage {
             await this.page.getByRole('button', { name: 'Create Delivery Allocation' }).click();
 
             // ✅ FC Filter with Wait
-            await this.page.getByRole('combobox', { name: 'FC(s) Select FC(s)' }).click();
-            await this.page.getByRole('combobox', { name: 'FC(s) Select FC(s)' }).fill('btml');
-            await this.page.waitForSelector('text=BTML: BTM', { timeout: 5000 });
-            await this.page.getByText('BTML: BTM').click();
+            // await this.page.getByRole('combobox', { name: 'FC(s) Select FC(s)' }).click();
+            // await this.page.getByRole('combobox', { name: 'FC(s) Select FC(s)' }).fill('btml');
+            // await this.page.waitForSelector('text=BTML: BTM', { timeout: 5000 });
+            // await this.page.getByText('BTML: BTM').click();
 
             // ✅ Brand Filter with Wait
             // await this.page.locator('label').filter({ hasText: 'Brands Select Brand(s)' }).locator('div').nth(2).click();
-            await this.page.getByRole('combobox', { name: 'Brands Select Brand(s)' }).click();
-            await this.page.getByRole('combobox', { name: 'Brands Select Brand(s)' }).fill('bri');
-            await this.page.waitForSelector('text=BRIT: Britania', { timeout: 5000 });
-            await this.page.getByText('BRIT: Britania').click();
+            // await this.page.getByRole('combobox', { name: 'Brands Select Brand(s)' }).click();
+            // await this.page.getByRole('combobox', { name: 'Brands Select Brand(s)' }).fill('bri');
+            // await this.page.waitForSelector('text=BRIT: Britania', { timeout: 5000 });
+            // await this.page.getByText('BRIT: Britania').click();
 
-            await this.page.getByRole('button', { name: 'Search' }).click();
-            await this.page.getByRole('listitem', { name: '2' }).locator('a').click();
+            // await this.page.getByRole('button', { name: 'Search' }).click();
+            // await this.page.getByRole('listitem', { name: '2' }).locator('a').click();
+            // await this.page.locator('.ant-checkbox').nth(1).click();
+            // await this.page.locator('.ant-checkbox').nth(2).click();
+            // await this.page.locator('.ant-checkbox').nth(3).click();
+            // await this.page.locator('.ant-checkbox').nth(4).click();
+            // await this.page.locator('.ant-checkbox').nth(5).click();
+            await this.page.locator('.ant-checkbox').nth(6).click();
+            await this.page.locator('.ant-checkbox').nth(7).click();
             await this.page.locator('.ant-checkbox').nth(8).click();
             // await this.page.locator('.ant-checkbox').nth(9).click();
-            // await this.page.locator('.ant-checkbox').nth(10).click();
 
             await this.page.getByRole('button', { name: 'Allocate Vehicle' }).click();
 
