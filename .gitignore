@@ -1,7 +1,8 @@
-node_modules/
+node_modules
 .env
-reports/
-screenshots/
-videos/
-test-results/
+reports
+screenshots
+videos
+test-results
+playwright.config.jstest-results/
 test-data/
