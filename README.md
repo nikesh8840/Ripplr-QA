@@ -47,4 +47,6 @@ npm test
 # Show HTML Report
 npm run test:report
 
-npx playwright test tests/vehicle-allocation/dl.spec.js --headed                        
+# npx playwright test tests/vehicle-allocation/dl.spec.js --headed       
+# npx playwright test tests/adaptorupload/upload.spec.js --headed  
+# npx playwright test tests/vehicle-allocation/dl-rfclose.spec.js --headed                 
