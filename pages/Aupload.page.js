@@ -17,7 +17,6 @@ exports.Uploadfile = class Uploadfile {
         await this.page.getByRole('button', { name: 'Upload' }).click();
         await this.page.getByLabel('Upload Csv').locator('label span').nth(1).click();
         await this.page.waitForTimeout(200);
-        // await this.page.getByText(uploadtype).click();
         await this.page.getByTitle(uploadtype).locator('div').click();
         await this.page.locator('div').filter({ hasText: /^Fc Type$/ }).nth(4).click();
         await this.page.locator('#rc_select_6').click();
@@ -26,9 +25,7 @@ exports.Uploadfile = class Uploadfile {
         await this.page.getByRole('combobox', { name: '*Brand' }).click();
         await this.page.getByRole('combobox', { name: '*Brand' }).fill('apx');
         await this.page.getByText('APX: APX').click();
-        // await this.page.locator('button').filter({ hasText: 'Upload a File', exact: true }).click();
         await this.page.setInputFiles('input[type="file"]', filePath);
-        // await this.page.locator('button').filter({ hasText: 'Upload a File', exact: true }).click();
         await this.page.getByRole('button', { name: 'Submit' }).click();
         await this.page.waitForTimeout(2000);
         await this.page.getByRole('combobox', { name: 'Select File Types' }).click();
@@ -48,7 +45,7 @@ exports.Uploadfile = class Uploadfile {
                 return false;
             }
             const uploadedTimeText = await this.page.locator('tr:first-child td:nth-child(6) div:nth-child(2) span').innerText();
-            const currentTime = new Date(); // Current system time
+            const currentTime = new Date();
             // Parse uploaded time (dd/MM/yyyy, hh:mm a)
             function parseUploadedTime(str) {
             // Example: "17/09/2025, 04:26 PM"
@@ -103,7 +100,6 @@ exports.Uploadfile = class Uploadfile {
         await this.page.getByRole('button', { name: 'Upload' }).click();
         await this.page.getByLabel('Upload Csv').locator('label span').nth(1).click();
         await this.page.waitForTimeout(200);
-        // await this.page.getByText(uploadtype).click();
         await this.page.getByTitle(uploadtype).locator('div').click();
         await this.page.locator('div').filter({ hasText: /^Fc Type$/ }).nth(4).click();
         await this.page.locator('#rc_select_6').click();
@@ -112,7 +108,6 @@ exports.Uploadfile = class Uploadfile {
         await this.page.getByRole('combobox', { name: '*Brand' }).click();
         await this.page.getByRole('combobox', { name: '*Brand' }).fill('Britania');
         await this.page.getByText('BRIT: Britania').click();
-        // await this.page.locator('button').filter({ hasText: 'Upload a File', exact: true }).click();
         // First input
         await this.page.locator('div.ant-space.ant-space-horizontal.ant-space-align-center input[type="file"]').nth(0).setInputFiles(m1);
 
@@ -122,7 +117,6 @@ exports.Uploadfile = class Uploadfile {
         // Third input
         await this.page.locator('div.ant-space.ant-space-horizontal.ant-space-align-center input[type="file"]').nth(2).setInputFiles(sr1);
 
-        // await this.page.locator('button').filter({ hasText: 'Upload a File', exact: true }).click();
         await this.page.getByRole('button', { name: 'Submit' }).click();
         await this.page.waitForTimeout(2000);
         await this.page.getByRole('combobox', { name: 'Select File Types' }).click();
@@ -134,7 +128,7 @@ exports.Uploadfile = class Uploadfile {
         await this.page.getByRole('combobox', { name: 'Brand(s) Select Brand(s)' }).fill('Britania');
         await this.page.getByText('BRIT: Britania').click();
         await this.page.getByRole('button', { name: 'Search' }).click();
-        for (let i = 0; i < 5; i++) { // max 5 retries (20 seconds total)
+        for (let i = 0; i < 5; i++) { 
             try {
                 await this.page.locator("td[class='ant-table-cell ant-table-cell-row-hover'] span[aria-label='sync'] svg").click({ timeout: 1000 });
                 console.log("✅ Click succeeded");
