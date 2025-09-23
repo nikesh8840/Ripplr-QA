@@ -28,10 +28,18 @@ const config = require('../../config/base.config');
 //     expect(result).toBeTruthy();
 // });
 
-test('Upload GRN file', async ({ page }) => {
+// test('Upload BTML:BRIT sales order file', async ({ page }) => {
+//     const uploadfile = new Uploadfile(page);
+
+//     await page.goto(config.baseURL43);
+//     const result = await uploadfile.UploadSalesOrder(config.credentials.username, config.credentials.password, 'Sales Order', 'btml', 'britania');
+//     expect(result).toBeTruthy();
+// });
+
+test('Upload YSPR:HUL sales order file', async ({ page }) => {
     const uploadfile = new Uploadfile(page);
 
     await page.goto(config.baseURL43);
-    const result = await uploadfile.UploadSalesOrder(config.credentials.username, config.credentials.password, 'Sales Order');
+    const result = await uploadfile.UploadSalesOrder(config.credentials.username, config.credentials.password, 'Sales Order', 'yspr', 'hul');
     expect(result).toBeTruthy();
 });
