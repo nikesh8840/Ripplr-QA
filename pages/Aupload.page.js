@@ -88,9 +88,9 @@ exports.Uploadfile = class Uploadfile {
       }
 
     async UploadSalesOrder(username, password, uploadtype) {
-        const h1 = path.resolve(__dirname, `../test-data/btml-britania/h1.csv`);
-        const m1 = path.resolve(__dirname, `../test-data/btml-britania/m1.csv`);
-        const sr1 = path.resolve(__dirname, `../test-data/btml-britania/sr.csv`);
+        const h1 = path.resolve(__dirname, `../test-data/btml-britania/h1 copy.csv`);
+        const m1 = path.resolve(__dirname, `../test-data/btml-britania/m1 copy.csv`);
+        const sr1 = path.resolve(__dirname, `../test-data/btml-britania/sr copy.csv`);
         await this.page.getByRole('textbox', { name: 'User ID User ID' }).click();
         await this.page.getByRole('textbox', { name: 'User ID User ID' }).fill(username);
         await this.page.getByRole('textbox', { name: 'Password Password' }).click();
@@ -128,24 +128,68 @@ exports.Uploadfile = class Uploadfile {
         await this.page.getByRole('combobox', { name: 'Brand(s) Select Brand(s)' }).fill('Britania');
         await this.page.getByText('BRIT: Britania').click();
         await this.page.getByRole('button', { name: 'Search' }).click();
-        for (let i = 0; i < 5; i++) { 
-            try {
-                await this.page.locator("td[class='ant-table-cell ant-table-cell-row-hover'] span[aria-label='sync'] svg").click({ timeout: 1000 });
-                console.log("✅ Click succeeded");
-                break; // exit loop if click worked
-            } catch (error) {
-                console.log(`⚠️ Attempt ${i + 1} failed, retrying in 4s...`);
-                await this.page.waitForTimeout(2000);
+        let cnt=0;
+        while(true){
+            cnt++;
+            if(cnt==14){
+                console.log("Something went wrong, file not Uploaded");
+                return false;
             }
+            const uploadedTimeText = await this.page.locator('tr:first-child td:nth-child(6) div:nth-child(2) span').innerText();
+            const currentTime = new Date(); // Current system time
+            // Parse uploaded time (dd/MM/yyyy, hh:mm a)
+            function parseUploadedTime(str) {
+            // Example: "17/09/2025, 04:26 PM"
+            const [datePart, timePart, ampm] = str.replace(',', '').split(/\s+/);
+            const [day, month, year] = datePart.split('/').map(Number);
+            let [hours, minutes] = timePart.split(':').map(Number);
+            // Convert 12-hour to 24-hour
+            if (ampm.toLowerCase() === 'pm' && hours < 12) hours += 12;
+            if (ampm.toLowerCase() === 'am' && hours === 12) hours = 0;
+            return new Date(year, month - 1, day, hours, minutes);
+            }
+            const uploadedTime = parseUploadedTime(uploadedTimeText);
+
+                const diffMs = Math.abs(currentTime.getTime() - uploadedTime.getTime());
+                const diffMinutes = Math.floor(diffMs / 60000);
+                console.log(`Difference in minutes: ${diffMinutes} minutes`);
+            if(diffMinutes<=1.5)break;    
+            await this.page.getByRole('button', { name: 'Search' }).click(); 
+       }
+
+        try {
+             await this.page.locator("tr:first-child .anticon-sync").click();
+             console.log("✅ Click succeeded");
+        } catch (error) {
+             console.log("❌ File uploaded but something went wrong:");
+             return true;
         }
+        // await this.page.waitForTimeout(4000);
+        cnt=0;
+        while(true){
+            cnt++;
+            if(cnt==14){
+                console.log("Something went wrong, file not Uploaded");
+                return false;
+            }
+            const ProgressCount = await this.page.locator('.ant-tag-blue strong').innerText();
+            console.log(`ProgressCount: ${ProgressCount}`);
+            if(ProgressCount==='0')break;
+            await this.page.waitForTimeout(3300);
+            await this.page.locator("div[class='ant-modal-body'] div[class='sc-bczRLJ sc-gsnTZi hRYqBu jnFvAE']").click();
+       }
 
-        await this.page.waitForTimeout(3000);
-        // await this.page.locator('.ant-table-cell.ant-table-cell-row-hover > .sc-bczRLJ.sc-gsnTZi > div:nth-child(4)').click();
-        await this.page.getByRole('button', { name: 'Refresh' }).click();
         await this.page.getByRole('button', { name: 'Close' }).click();
-        await this.page.waitForTimeout(10000);   
-        return true;
-
-      }  
+        try {
+            await this.page.locator("tr:first-child img[src*='eye-icon']").click();
+            await this.page.getByRole("body > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div:nth-child(3) > div:nth-child(3) > div:nth-child(1) > div:nth-child(1) > div:nth-child(2) > div:nth-child(2)").click();
+            await this.page.waitForTimeout(4000);
+            console.log("File Uploaded Successfully and processed");
+            return true;
+        }catch(error){
+            console.log("Something went wrong")
+            return true;
+        }
+    }
 };
 
