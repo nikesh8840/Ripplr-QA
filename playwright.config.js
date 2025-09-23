@@ -5,7 +5,7 @@ dotenv.config();
 
 export default defineConfig({
   timeout: 60000,
-  retries: 1,
+  retries: 0,
   testDir: './tests',
   use: {
     headless: true,
