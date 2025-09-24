@@ -15,7 +15,8 @@ const getBrandName = (brandCode) => {
             'britania': 'BRIT: Britania',
             'apx': 'APX: APX',
             'hul': 'HUL: HUL',
-            'huls': 'HULS: HUL Samadhan'
+            'huls': 'HULS: HUL Samadhan',
+            'sunpure': 'SNPR: Sunpure'
         }
         return brandMap[brandCode] || brandCode;
     }
@@ -33,12 +34,15 @@ const getFilePath = (fcCode, brandCode, fileType) => {
                 'c': 's.csv'
             },
             'yspr-huls': {
-                // 'a': 'bl.csv',
-                'a': 'bl100.csv',
-                // 'b': 'sr.csv',
-                'b': 'sr100.csv',
-                // 'c': 's.csv'
-                'c': 's100.csv'
+                'a': 'bl.csv',
+                // 'a': 'bl100.csv',
+                'b': 'sr.csv',
+                // 'b': 'sr100.csv',
+                'c': 's.csv'
+                // 'c': 's100.csv'
+            },
+            'btml-sunpure': {
+                'a': 'S1.csv',
             },
             'apx': {
                 'grn': 'GRN.csv',

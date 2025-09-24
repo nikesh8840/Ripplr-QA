@@ -18,18 +18,7 @@ exports.DlAndRFClosePage = class DlAndRFClosePage {
         await this.page.getByText("Logistics Management").click();
         await this.page.getByRole("link", { name: "Return To Fc" }).click();
         await this.page.locator("tr .ccyvke a").nth(0).click();
-        await this.page.getByText("vehicle allocated").first().click();
-        await this.page.getByText("Delivered", { exact: true }).click();
-        await this.page.getByRole("button", { name: "OK" }).click();
-        await this.page.getByRole("button", { name: "Yes" }).click();
-        await this.page.getByRole("button", { name: "right Delivery Details" }).click();
-        await this.page.getByRole("button", { name: "Update" }).click();
-        await this.page.getByRole("radio", { name: "Invoice Returned" }).check();
-        await this.page.getByRole("button", { name: "right Collection Details:" }).click();
-        await this.page.getByRole("button", { name: "Update" }).click();
-        await this.page.getByRole('link', {name: 'Invoice List'}).click();
-        await this.page.waitForTimeout(700);
-        await this.page.locator("td .fAmufx").nth(3).click();
+        await this.processDeliveryItems(3);
         await this.page.getByRole("button", { name: "Verify" }).click();
         await this.page.getByRole("button", { name: "Upload", exact: true }).click();
         await this.page.setInputFiles('input[type="file"]', filePath);
@@ -46,6 +35,34 @@ exports.DlAndRFClosePage = class DlAndRFClosePage {
         return false;
         }
       }
+
+    async processDeliveryItems(itemCount) {
+        try {
+            for(let i = 0; i < itemCount; i++) {
+                const status = await this.page.locator(`tr:nth-child(${i+1}) td:nth-child(8) .ant-select-selector`).innerText();
+                console.log('===========================',status);
+                if(status == "Delivered"){
+                    continue;
+                }
+                await this.page.locator(`tr:nth-child(${i+1}) td:nth-child(8) .ant-select-selector`).click();
+                await this.page.locator(`tr:nth-child(${i+1}) td:nth-child(8) .ant-select-selector`).getByText("Delivered", { exact: true }).click();
+                await this.page.getByRole("button", { name: "OK" }).click();
+                await this.page.getByRole("button", { name: "Yes" }).click();
+                await this.page.getByRole("button", { name: "right Delivery Details" }).click();
+                await this.page.getByRole("button", { name: "Update" }).click();
+                await this.page.getByRole("radio", { name: "Invoice Returned" }).check();
+                await this.page.getByRole("button", { name: "right Collection Details:" }).click();
+                await this.page.getByRole("button", { name: "Update" }).click();
+                await this.page.getByRole('link', {name: 'Invoice List'}).click();
+                await this.page.waitForTimeout(700);
+                await this.page.locator(`tr:nth-child(${i+1}) td .fAmufx`).nth(3).click();
+            }
+            return true;
+        } catch (err) {
+            console.error('Error processing delivery items:', err);
+            return false;
+        }
+    }
 };
 
 
