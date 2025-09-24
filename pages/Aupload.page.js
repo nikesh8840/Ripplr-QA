@@ -1,6 +1,64 @@
 
 const path = require('path');
 
+const getFCName = (fcCode) => {
+        const fcMap = {
+            'erhs': 'ERHS: ERHS',
+            'btml': 'BTML: BTM',
+            'yspr': 'YSPR: Yashawanthapur',
+        }
+        return fcMap[fcCode] || fcCode;
+ }
+
+const getBrandName = (brandCode) => {
+        const brandMap = {
+            'britania': 'BRIT: Britania',
+            'apx': 'APX: APX',
+            'hul': 'HUL: HUL',
+            'huls': 'HULS: HUL Samadhan'
+        }
+        return brandMap[brandCode] || brandCode;
+    }
+
+const getFilePath = (fcCode, brandCode, fileType) => {
+        const filePathMap = {
+            'btml-britania': {
+                'h1': 'h1 copy.csv',
+                'm1': 'm1 copy.csv',
+                'sr1': 'sr copy.csv'
+            },
+            'yspr-hul': {
+                'a': 'bl.csv',
+                'b': 'sr.csv',
+                'c': 's.csv'
+            },
+            'yspr-huls': {
+                // 'a': 'bl.csv',
+                'a': 'bl100.csv',
+                // 'b': 'sr.csv',
+                'b': 'sr100.csv',
+                // 'c': 's.csv'
+                'c': 's100.csv'
+            },
+            'apx': {
+                'grn': 'GRN.csv',
+                'salesorder': 'salesorder.csv',
+                'salesreturn': 'salesreturn.csv'
+            }
+        };
+        
+        const fcBrandKey = `${fcCode}-${brandCode}`;
+        const fileName = filePathMap[fcBrandKey]?.[fileType];
+        
+        if (!fileName) {
+            throw new Error(`File path not found for FC: ${fcCode}, Brand: ${brandCode}, FileType: ${fileType}`);
+        }
+        
+        return path.resolve(__dirname, `../test-data/${fcBrandKey}/${fileName}`);
+    }
+ 
+
+
 exports.Uploadfile = class Uploadfile {
     constructor(page) {
         this.page = page;
