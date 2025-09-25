@@ -18,17 +18,21 @@ exports.DlAndRFClosePage = class DlAndRFClosePage {
         await this.page.getByText("Logistics Management").click();
         await this.page.getByRole("link", { name: "Return To Fc" }).click();
         await this.page.locator("tr .ccyvke a").nth(0).click();
-        await this.processDeliveryItems(3);
-        await this.page.getByRole("button", { name: "Verify" }).click();
-        await this.page.getByRole("button", { name: "Upload", exact: true }).click();
+        await this.page.waitForTimeout(3000); // Wait for any dynamic loading
+        await this.page.waitForSelector('tbody tr', { timeout: 10000 });
+        await this.page.waitForTimeout(2000);
+        const rowCount1 = await this.page.locator('tbody tr').count();
+        const allRows = await this.page.locator('tbody tr').all();
+        console.log(`tbody tr count: ${rowCount1} and allRows length: ${allRows.length}`);
+        await this.processDeliveryItems(Math.max(rowCount1, allRows.length));
+        await this.page.locator('.bEwzzI').click();
         await this.page.setInputFiles('input[type="file"]', filePath);
-        await this.page.getByRole("button", { name: "Upload", exact: true }).click();
-        await this.page.getByRole("button", { name: "Verify" }).click();
-        await this.page.getByRole("button", { name: "Upload", exact: true }).click();
+        await this.page.locator('.bWEHjs').click();
+        await this.page.locator('.bEwzzI').click();
         await this.page.setInputFiles('input[type="file"]', filePath);
-        await this.page.getByRole("button", { name: "Upload", exact: true }).click();
-        await page.waitForTimeout(1000);
-        await page.getByRole('button', { name: 'Verify' }).click();
+        await this.page.locator('.bWEHjs').click(); 
+        await this.page.waitForTimeout(1000);
+        await this.page.getByRole('button', { name: 'Verify' }).click();
         return true;
       } catch (err) {
         console.error('Delivered process failed:');
@@ -45,7 +49,8 @@ exports.DlAndRFClosePage = class DlAndRFClosePage {
                     continue;
                 }
                 await this.page.locator(`tr:nth-child(${i+1}) td:nth-child(8) .ant-select-selector`).click();
-                await this.page.locator(`tr:nth-child(${i+1}) td:nth-child(8) .ant-select-selector`).getByText("Delivered", { exact: true }).click();
+                await this.page.waitForSelector('.ant-select-dropdown', { timeout: 5000 });
+                await this.page.locator('.ant-select-dropdown .ant-select-item:has-text("Delivered"):not([disabled]):not([hidden]):not(.ant-select-item-option-disabled)').first().click();
                 await this.page.getByRole("button", { name: "OK" }).click();
                 await this.page.getByRole("button", { name: "Yes" }).click();
                 await this.page.getByRole("button", { name: "right Delivery Details" }).click();
