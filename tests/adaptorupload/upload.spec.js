@@ -2,13 +2,13 @@ const { test, expect } = require('@playwright/test');
 const { Uploadfile } = require('../../pages/Aupload.page');
 const config = require('../../config/base.config');
 
-// test('Upload GRN file', async ({ page }) => {
-//     const uploadfile = new Uploadfile(page);
+test('Upload GRN file', async ({ page }) => {
+    const uploadfile = new Uploadfile(page);
 
-//     await page.goto(config.baseURL43);
-//     const result = await uploadfile.Upload(config.credentials.username, config.credentials.password, 'Purchase Order', 'GRN');
-//     expect(result).toBeTruthy();
-// });
+    await page.goto(config.baseURL43);
+    const result = await uploadfile.Upload(config.credentials.username, config.credentials.password, 'Purchase Order', 'GRN');
+    expect(result).toBeTruthy();
+});
 
 
 
@@ -44,10 +44,10 @@ const config = require('../../config/base.config');
 //     expect(result).toBeTruthy();
 // });
 
-test('Upload YSPR:HULS sales order file', async ({ page }) => {
-    const uploadfile = new Uploadfile(page);
+// test('Upload YSPR:HULS sales order file', async ({ page }) => {
+//     const uploadfile = new Uploadfile(page);
 
-    await page.goto(config.baseURL43);
-    const result = await uploadfile.UploadSalesOrder(config.credentials.username, config.credentials.password, 'Sales Order', 'yspr', 'huls');
-    expect(result).toBeTruthy();
-});
+//     await page.goto(config.baseURL43);
+//     const result = await uploadfile.UploadSalesOrder(config.credentials.username, config.credentials.password, 'Sales Order', 'yspr', 'huls');
+//     expect(result).toBeTruthy();
+// });

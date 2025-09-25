@@ -137,6 +137,19 @@ exports.Uploadfile = class Uploadfile {
              return true;
         }
         await this.page.waitForTimeout(4000);
+         cnt=0;
+        while(true){
+            cnt++;
+            if(cnt==14){
+                console.log("Something went wrong, file not Uploaded");
+                return false;
+            }
+            const ProgressCount = await this.page.locator('.ant-tag-blue strong').innerText();
+            console.log(`ProgressCount: ${ProgressCount}`);
+            if(ProgressCount==='0')break;
+            await this.page.waitForTimeout(3300);
+            await this.page.locator("div[class='ant-modal-body'] div[class='sc-bczRLJ sc-gsnTZi hRYqBu jnFvAE']").click();
+       }
         await this.page.getByRole('button', { name: 'Close' }).click();
         try {
             await this.page.locator("tr:first-child img[src*='eye-icon']").click();
