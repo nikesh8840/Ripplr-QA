@@ -10,13 +10,13 @@ const config = require('../../config/base.config');
 //     expect(result).toBeTruthy();
 // });
 
-// test('Allocate vehicle with fc and brand', async ({ page }) => {
-//     const vehicleAllocationPage = new VehicleAllocationPage(page);
+test('Allocate vehicle with fc and brand', async ({ page }) => {
+    const vehicleAllocationPage = new VehicleAllocationPage(page);
 
-//     await page.goto(config.baseURL);
-//     const result = await vehicleAllocationPage.allocateVehiclewithfcbrand(config.credentials.username, config.credentials.password, 'btml', 'britania');
-//     expect(result).toBeTruthy();
-// });
+    await page.goto(config.baseURL);
+    const result = await vehicleAllocationPage.allocateVehiclewithfcbrand(config.credentials.username, config.credentials.password, 'btml', 'britania');
+    expect(result).toBeTruthy();
+});
 
 // test('Allocate vehicle with fc and brand', async ({ page }) => {
 //     const vehicleAllocationPage = new VehicleAllocationPage(page);
@@ -25,9 +25,9 @@ const config = require('../../config/base.config');
 //     expect(result).toBeTruthy();
 // });
 
-test('Allocate vehicle with fc and brand', async ({ page }) => {
-    const vehicleAllocationPage = new VehicleAllocationPage(page);
-    await page.goto(config.baseURL);
-    const result = await vehicleAllocationPage.allocateVehiclewithfcbrand(config.credentials.username, config.credentials.password, 'yspr', 'huls');
-    expect(result).toBeTruthy();
-});
+// test('Allocate vehicle with fc and brand', async ({ page }) => {
+//     const vehicleAllocationPage = new VehicleAllocationPage(page);
+//     await page.goto(config.baseURL);
+//     const result = await vehicleAllocationPage.allocateVehiclewithfcbrand(config.credentials.username, config.credentials.password, 'yspr', 'huls');
+//     expect(result).toBeTruthy();
+// });
