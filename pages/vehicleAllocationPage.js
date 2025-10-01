@@ -194,6 +194,8 @@ exports.VehicleAllocationPage = class VehicleAllocationPage {
             await this.page.getByRole('button', { name: 'Search' }).click();
             await this.page.locator('.ant-checkbox').nth(1).click();
             await this.page.locator('.ant-checkbox').nth(2).click();
+            await this.page.locator('.ant-checkbox').nth(3).click();
+            await this.page.locator('.ant-checkbox').nth(4).click();
 
             await this.page.getByRole('button', { name: 'Allocate Vehicle' }).click();
 

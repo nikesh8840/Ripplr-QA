@@ -27,8 +27,8 @@ exports.DlAndRFClosePage = class DlAndRFClosePage {
         await this.page.getByRole("button", { name: "Upload", exact: true }).click();
         await this.page.setInputFiles('input[type="file"]', filePath);
         await this.page.getByRole("button", { name: "Upload", exact: true }).click();
-        await page.waitForTimeout(1000);
-        await page.getByRole('button', { name: 'Verify' }).click();
+        await this.page.waitForTimeout(1000);
+        await this.page.getByRole('button', { name: 'Verify' }).click();
         return true;
       } catch (err) {
         console.error('Delivered process failed:');
