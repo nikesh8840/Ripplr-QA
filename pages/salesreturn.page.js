@@ -32,7 +32,7 @@ exports.ReturnPage = class ReturnPage {
         await this.page.getByRole('textbox', { name: 'search icon' }).click();
         await this.page.locator('input[type="checkbox"]').nth(0).check();
         const returnableQty =await this.page.locator('tbody tr td:nth-child(2) .sc-bczRLJ').innerText();
-       const returnQty = Math.ceil(returnableQty / 2);
+        const returnQty = Math.ceil(returnableQty / 2);
 
         // Click on the input number component and fill the value
         await this.page.locator('tbody tr td:nth-child(3) .ant-input-number input').click();

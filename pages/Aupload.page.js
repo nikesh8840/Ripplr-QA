@@ -16,6 +16,7 @@ const getFCName = (fcCode) => {
 const getBrandName = (brandCode) => {
         const brandMap = {
             'britania': 'BRIT: Britania',
+            'britannia': 'BRIT: Britannia',
             'apx': 'APX: APX',
             'hul': 'HUL: HUL',
             'huls': 'HULS: HUL Samadhan',
@@ -31,6 +32,11 @@ const getBrandName = (brandCode) => {
 const getFilePath = (fcCode, brandCode, fileType) => {
         const filePathMap = {
             'btml-britania': {
+                'a': 'm1.csv',
+                'b': 'h1.csv',
+                'c': 'sr.csv'
+            },
+            'btml-britannia': {
                 'a': 'm1.csv',
                 'b': 'h1.csv',
                 'c': 'sr.csv'
@@ -202,9 +208,8 @@ exports.Uploadfile = class Uploadfile {
         await this.page.getByLabel('Upload Csv').locator('label span').nth(1).click();
         await this.page.waitForTimeout(200);
         await this.page.getByTitle(uploadtype).locator('div').click();
-        await this.page.locator('div').filter({ hasText: /^Fc Type$/ }).nth(4).click();
-        await this.page.locator('#rc_select_6').click();
-        await this.page.locator('#rc_select_6').fill(FC);
+        await this.page.locator('.cuNTTY:first-child .ant-form-item-control input').click();
+        await this.page.locator('.cuNTTY:first-child .ant-form-item-control input').fill(FC);
         const FcName = getFCName(FC);
         await this.page.getByText(FcName).click();
         await this.page.getByRole('combobox', { name: '*Brand' }).click();
@@ -277,7 +282,10 @@ exports.Uploadfile = class Uploadfile {
             }
             const ProgressCount = await this.page.locator('.ant-tag-blue strong').innerText();
             console.log(`ProgressCount: ${ProgressCount}`);
-            if(ProgressCount==='0')break;
+            if(ProgressCount==='0'){
+                await this.page.waitForTimeout(4000);
+                break;
+            }
             await this.page.waitForTimeout(3300);
             await this.page.locator("div[class='ant-modal-body'] div[class='sc-bczRLJ sc-gsnTZi hRYqBu jnFvAE']").click();
        }
@@ -310,9 +318,8 @@ exports.Uploadfile = class Uploadfile {
         await this.page.getByLabel('Upload Csv').locator('label span').nth(1).click();
         await this.page.waitForTimeout(200);
         await this.page.getByTitle(uploadtype).locator('div').click();
-        await this.page.locator('div').filter({ hasText: /^Fc Type$/ }).nth(4).click();
-        await this.page.locator('#rc_select_6').click();
-        await this.page.locator('#rc_select_6').fill(FC);
+        await this.page.locator('.cuNTTY:first-child .ant-form-item-control input').click();
+        await this.page.locator('.cuNTTY:first-child .ant-form-item-control input').fill(FC);
         const FcName = getFCName(FC);
         await this.page.getByText(FcName).click();
         await this.page.getByRole('combobox', { name: '*Brand' }).click();

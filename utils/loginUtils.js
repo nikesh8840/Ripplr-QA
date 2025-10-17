@@ -84,7 +84,7 @@ async function loginAndNavigateToSubModule(page, username, password, moduleName,
         console.log(`Navigated to ${moduleName} module`);
         
         // Navigate to the sub-module
-        await page.getByRole('link', { name: subModuleName }).click();
+        await page.getByRole('link', { name: subModuleName, exact:true }).click();
         console.log(`Navigated to ${subModuleName} sub-module`);
         
         return true;

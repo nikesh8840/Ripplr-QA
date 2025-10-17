@@ -20,6 +20,14 @@ const config = require('../../config/base.config');
 //     expect(result).toBeTruthy();
 // });
 
+// test('Upload salesOrder file', async ({ page }) => {
+//     const uploadfile = new Uploadfile(page);
+
+//     await page.goto(config.baseURLpreprod);
+//     const result = await uploadfile.Upload(config.credentials.username, config.credentials.password, 'Sales Order', 'salesorder');
+//     expect(result).toBeTruthy();
+// });
+
 // test('Upload SalesReturn file', async ({ page }) => {
 //     const uploadfile = new Uploadfile(page);
 
@@ -28,21 +36,29 @@ const config = require('../../config/base.config');
 //     expect(result).toBeTruthy();
 // });
 
-// test('Upload BTML:BRIT sales order file', async ({ page }) => {
-//     const uploadfile = new Uploadfile(page);
-
-//     await page.goto(config.baseURL43);
-//     const result = await uploadfile.UploadSalesOrder(config.credentials.username, config.credentials.password, 'Sales Order', 'btml', 'britania');
-//     expect(result).toBeTruthy();
-// });
-
 test('Upload BTML:BRIT sales order file', async ({ page }) => {
     const uploadfile = new Uploadfile(page);
 
     await page.goto(config.baseURL43);
-    const result = await uploadfile.UploadSalesOrder(config.credentials.username, config.credentials.password, 'Sales Order', 'peenya', 'nestle');
+    const result = await uploadfile.UploadSalesOrder(config.credentials.username, config.credentials.password, 'Sales Order', 'btml', 'britania');
     expect(result).toBeTruthy();
 });
+
+// test('preprod Upload BTML:BRIT sales order file', async ({ page }) => {
+//     const uploadfile = new Uploadfile(page);
+
+//     await page.goto(config.baseURLpreprod);
+//     const result = await uploadfile.UploadSalesOrder(config.credentials.username, config.credentials.password, 'Sales Order', 'btml', 'britannia');
+//     expect(result).toBeTruthy();
+// });
+
+// test('Upload BTML:BRIT sales order file', async ({ page }) => {
+//     const uploadfile = new Uploadfile(page);
+
+//     await page.goto(config.baseURL43);
+//     const result = await uploadfile.UploadSalesOrder(config.credentials.username, config.credentials.password, 'Sales Order', 'peenya', 'nestle');
+//     expect(result).toBeTruthy();
+// });
 
 // test('Upload BTML:nivea sales order file', async ({ page }) => {
 //     const uploadfile = new Uploadfile(page);
