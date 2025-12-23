@@ -24,6 +24,23 @@ const config = require('../../config/base.config');
 //     const uploadfile = new Uploadfile(page);
 
 //     await page.goto(config.baseURLpreprod);
+//     const result = await uploadfile.UploadSinglefile(config.credentials.username, config.credentials.password, 'Sales Order', 'salesordergoogle');
+//     expect(result).toBeTruthy();
+// });
+
+// test('Upload salesOrder file', async ({ page }) => {
+//     const uploadfile = new Uploadfile(page);
+
+//     await page.goto(config.baseURL43);
+//     const result = await uploadfile.UploadSinglefile(config.credentials.username, config.credentials.password, 'Sales Order', 'salesordergoogle');
+//     expect(result).toBeTruthy();
+// });
+
+
+// test('Upload salesOrder file', async ({ page }) => {
+//     const uploadfile = new Uploadfile(page);
+
+//     await page.goto(config.baseURLpreprod);
 //     const result = await uploadfile.Upload(config.credentials.username, config.credentials.password, 'Sales Order', 'salesorder');
 //     expect(result).toBeTruthy();
 // });
@@ -36,26 +53,35 @@ const config = require('../../config/base.config');
 //     expect(result).toBeTruthy();
 // });
 
-test('Upload BTML:BRIT sales order file', async ({ page }) => {
-    const uploadfile = new Uploadfile(page);
-
-    await page.goto(config.baseURL43);
-    const result = await uploadfile.UploadSalesOrder(config.credentials.username, config.credentials.password, 'Sales Order', 'btml', 'britania');
-    expect(result).toBeTruthy();
-});
-
-// test('preprod Upload BTML:BRIT sales order file', async ({ page }) => {
-//     const uploadfile = new Uploadfile(page);
-
-//     await page.goto(config.baseURLpreprod);
-//     const result = await uploadfile.UploadSalesOrder(config.credentials.username, config.credentials.password, 'Sales Order', 'btml', 'britannia');
-//     expect(result).toBeTruthy();
-// });
-
 // test('Upload BTML:BRIT sales order file', async ({ page }) => {
 //     const uploadfile = new Uploadfile(page);
 
 //     await page.goto(config.baseURL43);
+//     const result = await uploadfile.UploadSalesOrder(config.credentials.username, config.credentials.password, 'Sales Order', 'btml', 'britania');
+//     expect(result).toBeTruthy();
+// });
+
+// test('Upload BNDP:NBO sales order file', async ({ page }) => {
+//     const uploadfile = new Uploadfile(page);
+
+//     await page.goto(config.baseURL43);
+//     const result = await uploadfile.UploadSalesOrder(config.credentials.username, config.credentials.password, 'Sales Order', 'bndp', 'nbo');
+//     expect(result).toBeTruthy();
+// });
+
+test('preprod Upload BTML:BRIT sales order file', async ({ page }) => {
+    const uploadfile = new Uploadfile(page);
+
+    await page.goto(config.baseURLpreprod);
+    const result = await uploadfile.UploadSalesOrder(config.credentials.username, config.credentials.password, 'Sales Order', 'btml', 'britannia');
+    expect(result).toBeTruthy();
+});
+
+
+// test('Upload BTML:BRIT sales order file', async ({ page }) => {
+//     const uploadfile = new Uploadfile(page);
+
+//     await page.goto(config.baseURLpreprod);
 //     const result = await uploadfile.UploadSalesOrder(config.credentials.username, config.credentials.password, 'Sales Order', 'peenya', 'nestle');
 //     expect(result).toBeTruthy();
 // });
@@ -63,7 +89,7 @@ test('Upload BTML:BRIT sales order file', async ({ page }) => {
 // test('Upload BTML:nivea sales order file', async ({ page }) => {
 //     const uploadfile = new Uploadfile(page);
 
-//     await page.goto(config.baseURL43);
+//     await page.goto(config.baseURLpreprod);
 //     const result = await uploadfile.UploadSalesOrdertwo(config.credentials.username, config.credentials.password, 'Sales Order', 'btml', 'nivea');
 //     expect(result).toBeTruthy();
 // });

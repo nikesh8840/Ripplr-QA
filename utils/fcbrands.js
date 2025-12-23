@@ -17,7 +17,8 @@ const getBrandName = (brandCode) => {
             'nestle': 'NESL: Nestle',
             'apx': 'APX: APX',
             'hul': 'HUL: HUL',
-            'huls': 'HULS: HUL Samadhan'
+            'huls': 'HULS: HUL Samadhan',
+            'google': 'GLSP: Google Pixel'
         }
         return brandMap[brandCode] || brandCode;
     }

@@ -54,7 +54,7 @@ exports.DlAndRFClosePage = class DlAndRFClosePage {
                 if(status == "Delivered"){
                     continue;
                 }
-                const filePath = path.resolve(__dirname, '../test-data/BILLS (1) (1).pdf');
+                
                 // if(i%2==0){
                 //     await this.page.locator(`tr:nth-child(${i+1}) td:nth-child(8) .ant-select-selector`).click();
                 // await this.page.waitForSelector('.ant-select-dropdown', { timeout: 5000 });
@@ -94,8 +94,9 @@ exports.DlAndRFClosePage = class DlAndRFClosePage {
                 const addImageBtn = await this.page.locator('.ant-modal-content button .iVToiv');
                 if(await addImageBtn.count() > 0) {
                     console.log('Add More Image button found, proceeding to upload file');
+                    const filePath = path.resolve(__dirname, '../test-data/BILLS (1) (1).pdf');
                     await addImageBtn.click();
-                    await this.page.locator('.ant-upload-drag-container .jCxLyX').click();
+                    // await this.page.locator('.ant-upload-drag-container .jCxLyX').click();
                     await this.page.setInputFiles('input[type="file"]', filePath);
                     await this.page.locator('.ant-modal-body button').click();
                     await this.page.locator('.ant-modal-content button.ant-modal-close').click();
