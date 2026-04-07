@@ -10,21 +10,21 @@ const config = require('../../config/base.config');
 //     expect(result).toBeTruthy();
 // });
 
-test('Allocate vehicle with fc and brand', async ({ page }) => {
-    const vehicleAllocationPage = new VehicleAllocationPage(page);
-
-    await page.goto(config.baseURL);
-    const result = await vehicleAllocationPage.allocateVehiclewithfcbrand(config.credentials.username, config.credentials.password, 'btml', 'britania');
-    expect(result).toBeTruthy();
-});
-
-// test('Preprod Allocate vehicle with fc and brand', async ({ page }) => {
+// test('Allocate vehicle with fc and brand', async ({ page }) => {
 //     const vehicleAllocationPage = new VehicleAllocationPage(page);
 
-//     await page.goto(config.baseURLpreprod);
-//     const result = await vehicleAllocationPage.allocateVehiclewithfcbrand(config.credentials.username, config.credentials.password, 'btml', 'britannia');
+//     await page.goto(config.baseURL);
+//     const result = await vehicleAllocationPage.allocateVehiclewithfcbrand(config.credentials.username, config.credentials.password, 'btml', 'britania');
 //     expect(result).toBeTruthy();
 // });
+
+test('Preprod Allocate vehicle with fc and brand', async ({ page }) => {
+    const vehicleAllocationPage = new VehicleAllocationPage(page);
+
+    await page.goto(config.baseURLpreprod);
+    const result = await vehicleAllocationPage.allocateVehiclewithfcbrand(config.credentials.username, config.credentials.password, 'bgrd', 'marico');
+    expect(result).toBeTruthy();
+});
 
 // test('Allocate vehicle with fc and brand', async ({ page }) => {
 //     const vehicleAllocationPage = new VehicleAllocationPage(page);

@@ -107,7 +107,7 @@ exports.VehicleAllocationPage = class VehicleAllocationPage {
             await this.page.getByRole('textbox', { name: '*Vehicle No' }).fill('KA8JD9302');
 
             await this.page.getByRole('textbox', { name: '*Driver', exact: true }).click();
-            await this.page.getByRole('textbox', { name: '*Driver', exact: true }).fill('Nikesh A');
+            await this.page.getByRole('textbox', { name: '*Driver', exact: true }).fill('NIKesHh A');
 
             await this.page.getByRole('textbox', { name: '*Vendor' }).click();
             await this.page.getByRole('textbox', { name: '*Vendor' }).fill('dfs');
@@ -195,10 +195,21 @@ exports.VehicleAllocationPage = class VehicleAllocationPage {
 
             await this.page.getByRole('button', { name: 'Search' }).click();
             await this.page.locator('.ant-checkbox').nth(1).click();
-            // await this.page.locator('.ant-checkbox').nth(2).click();
-            // await this.page.locator('.ant-checkbox').nth(3).click();
+            await this.page.locator('.ant-checkbox').nth(2).click();
+            await this.page.locator('.ant-checkbox').nth(3).click();
 
             await this.page.getByRole('button', { name: 'Allocate Vehicle' }).click();
+            
+            // Skip button is optional - wait only 2 seconds for it to appear
+            try {
+                const skipButton = this.page.getByRole('button', { name: 'Skip' });
+                // Check if button is visible within 2 seconds
+                await skipButton.waitFor({ state: 'visible', timeout: 2000 });
+                await skipButton.click();
+                console.log('Skip button found and clicked');
+            } catch (error) {
+                console.log('Skip button did not appear within 2 seconds, continuing...');
+            }
 
             await this.page.locator('.ant-form-item-control-input-content').first().click();
             await this.page.getByTitle('Both').locator('div').click();
@@ -210,24 +221,26 @@ exports.VehicleAllocationPage = class VehicleAllocationPage {
             await this.page.waitForSelector('div[title="Regular"]', { timeout: 5000 });
             await this.page.getByText('Regular').nth(4).click();
 
-            await this.page.getByRole('textbox', { name: '*Vehicle No' }).click();
-            await this.page.getByRole('textbox', { name: '*Vehicle No' }).fill('KA8JD9302');
+            await this.page.getByRole('textbox', { name: 'Vehicle Number*' }).click();
+            await this.page.getByRole('textbox', { name: 'Vehicle Number*' }).fill('KA8JD9302');
 
-            await this.page.getByRole('textbox', { name: '*Driver', exact: true }).click();
-            await this.page.getByRole('textbox', { name: '*Driver', exact: true }).fill('Nikesh A');
+            await this.page.getByRole('textbox', { name: 'Driver Name *', exact: true }).click();
+            await this.page.getByRole('textbox', { name: 'Driver Name *', exact: true }).fill('NIKesHh A');
 
-            await this.page.getByRole('textbox', { name: '*Vendor' }).click();
-            await this.page.getByRole('textbox', { name: '*Vendor' }).fill('dfs');
+            await this.page.getByRole('textbox', { name: 'Vendor Name *' }).click();
+            await this.page.getByRole('textbox', { name: 'Vendor Name *' }).fill('Test Vendor');
 
-            await this.page.locator('div').filter({ hasText: /^\*Driver Mobile Number$/ }).nth(2).click();
-            await this.page.getByRole('textbox', { name: '*Driver Mobile Number' }).click();
-            await this.page.getByRole('textbox', { name: '*Driver Mobile Number' }).fill('8840576893');
+            // await this.page.locator('div').filter({ hasText: /^\*Driver Number$/ }).nth(2).click();
+            await this.page.getByRole('textbox', { name: 'Driver Number *' }).click();
+            await this.page.getByRole('textbox', { name: 'Driver Number *' }).fill('8840576893');
 
             await this.page.locator('.ant-form-item-control-input-content').last().click();
             await this.page.locator('.ant-form-item-control-input-content input').last().fill('del');
             await this.page.getByTitle('Delivery Boy').locator('div').click();
 
             await this.page.getByRole('button', { name: 'Submit' }).click();
+            await this.page.getByRole('button', { name: 'Confirm' }).click();
+            await this.page.getByRole('button', { name: 'Confirm' }).click();
             await this.page.waitForTimeout(3000);
 
             return true;

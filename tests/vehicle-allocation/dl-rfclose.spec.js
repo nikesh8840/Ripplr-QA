@@ -10,10 +10,43 @@ const config = require('../../config/base.config');
 //     expect(result).toBeTruthy();
 // });
 
-test('Allocate vehicle', async ({ page }) => {
+// test('Delivered and partial collect with RFC close', async ({ page }) => {
+//     const dlandrfclose = new DlAndRFClosePage(page);
+
+//     await page.goto(config.baseURLpreprod);
+//     const result = await dlandrfclose.dlrfclose(config.credentials.username, config.credentials.password);
+//     expect(result).toBeTruthy();
+// });
+
+// test('Delivered , full collection  and RFC close', async ({ page }) => {
+//     const dlandrfclose = new DlAndRFClosePage(page);
+
+//     await page.goto(config.baseURLpreprod);
+//     const result = await dlandrfclose.dlrfclosefullcollection(config.credentials.username, config.credentials.password);
+//     expect(result).toBeTruthy();
+// });
+
+
+// test('Delivered , full collection  and RFC close', async ({ page }) => {
+//     const dlandrfclose = new DlAndRFClosePage(page);
+
+//     await page.goto(config.baseURLpreprod);
+//     const result = await dlandrfclose.PartialDeliveredFullCollectionRfcClose(config.credentials.username, config.credentials.password);
+//     expect(result).toBeTruthy();
+// });
+
+test('Delivered , full collection  and RFC close', async ({ page }) => {
     const dlandrfclose = new DlAndRFClosePage(page);
 
     await page.goto(config.baseURLpreprod);
-    const result = await dlandrfclose.dlrfclose(config.credentials.username, config.credentials.password);
+    const result = await dlandrfclose.DeliveryAttemptRfcClose(config.credentials.username, config.credentials.password);
     expect(result).toBeTruthy();
 });
+
+// test('Delivered , full collection  and RFC close', async ({ page }) => {
+//     const dlandrfclose = new DlAndRFClosePage(page);
+
+//     await page.goto(config.baseURLpreprod);
+//     const result = await dlandrfclose.DeliveryActionOnEachRow(config.credentials.username, config.credentials.password);
+//     expect(result).toBeTruthy();
+// });

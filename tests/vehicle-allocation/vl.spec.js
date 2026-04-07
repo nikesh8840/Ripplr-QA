@@ -31,7 +31,7 @@ test('test', async ({ page }) => {
   await page.getByRole('textbox', { name: '*Vehicle No' }).click();
   await page.getByRole('textbox', { name: '*Vehicle No' }).fill('KA8JD9302');
   await page.getByRole('textbox', { name: '*Driver', exact: true }).click();
-  await page.getByRole('textbox', { name: '*Driver', exact: true }).fill('Nikesh A');
+  await page.getByRole('textbox', { name: '*Driver', exact: true }).fill('NIKesHh A');
   await page.getByRole('textbox', { name: '*Vendor' }).click();
   await page.getByRole('textbox', { name: '*Vendor' }).fill('dfs');
   await page.locator('div').filter({ hasText: /^\*Driver Mobile Number$/ }).nth(2).click();

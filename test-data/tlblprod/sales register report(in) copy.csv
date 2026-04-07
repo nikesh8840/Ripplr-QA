@@ -1,0 +1,17 @@
+,,BillWise Sales Register,,Date:,1/4/2026,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,Distributor :,INTELLIGENT RETAIL PVT LTD,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,Salesperson    :,List of Salesperson,,From Date   :,1/4/2026,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,"Beat	        :",List of Beats,,To Date     :,1/4/2026,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,Outlet      :,List of Outlets,,Group By    :,None,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,Division    :,List of Divisions,,Report Type :,Bill Wise,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,Vehicle     :,List of Vehicles,,Bill Type   :,All,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Sr No,Salesperson Name,BillDate/Sales Return Date,BillRefNo,Party Code,Party MasterCode,Party Name,Tin Number,GSTIN Number,PAN Number,Crd Sales,Cash Sales,Sal Ret,SchDisc,CashDisc,Taxable Amt,Tax Amt,Agri Tax,SRT Tax,SRT AgriTax,Net Sales,Adjustments,QPS Adj,PECOM Adj,TC Adj,CONCpn Adj,Reversed Payouts,PECOM/TC/QPS Adj,CR Adj,DR Adj,TCS Per,TCS Amt,TDS-194R Per,TDS 194R Amount,BillValue,RoundOff,Status,BTPR SchDisc,OutPyt Adj,IQSch Adj,TOTSch Adj,TOT Disc,DisFin Adj,Ushop Redemption,HUL Code,Payment Type,RS Product Discount,Shikhar Scheme,RS Operated Discount
+6,Krishnappa 9972324633 - SMN00002,1/4/2026,MYS00006,P272378,P272378,K V STORES,AJDPT1889L,29AJDPT1889L1ZC,,18559.44,0,0,1063.1,174.96,17321.38,1015.2,0,0,0,18336.58,0,0,0,0,0,0,0,0,0,0,0,0,0,18270,-0.32,Pending,46.27,0,0,0,0,0,0,HUL-43A633P272378,RS Credit,0,20,0
+7,DINESH P - SMN00005,1/4/2026,MYS00007,D-P14709,D-P14709,SLS PROVISION STORE-D,1,29ATZPV5607N1ZC,,1266.07,0,0,0,0,1266.07,227.89,0,0,0,1493.96,0,0,0,0,0,0,0,0,0,0,0,0,0,1474,0.04,Pending,0,0,0,0,0,0,0,HUL-431762D-P42517,RS Credit,0,20,0
+8,DINESH P - SMN00005,1/4/2026,MYS00008,D-P22085,D-P22085,A.R Traders-D,NA,,,9478.39,0,0,301.33,91.77,9085.29,1602.73,0,0,0,10688.02,0,0,0,0,0,0,0,0,0,0,0,0,0,10688,-0.01,Pending,0,0,0,0,0,0,0,HUL-43A633D-P22085,RS Credit,0,0,0
+9,Gurudatha  - SMN00010,1/4/2026,MYS00009,D-P1962,D-P1962,BALAJI GEN STORE-D-D-D,URD,,,6528.16,0,0,235.54,0,6292.63,314.63,0,0,0,6607.26,0,0,0,0,0,0,0,0,0,0,0,0,0,6587,-0.25,Pending,0,0,0,0,0,0,0,HUL-431127F-SHAN2,RS Credit,0,20,0

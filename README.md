@@ -47,6 +47,18 @@ npm test
 # Show HTML Report
 npm run test:report
 
-# npx playwright test tests/vehicle-allocation/dl.spec.js --headed       
-# npx playwright test tests/adaptorupload/upload.spec.js --headed  
+# npx playwright test tests/vehicle-allocation/vl1.spec.js --headed       
+# npx playwright test tests/adaptorupload/upload.spec.js  --headed  
 # npx playwright test tests/vehicle-allocation/dl-rfclose.spec.js --headed                 
+# npx playwright test tests/combined-flow.spec.js --headed
+
+
+# Refactor this Playwright code
+# Improve selectors
+# Convert to page object model
+# Remove hardcoded waits
+# Add assertions
+# Make reusable functions
+
+
+# npx playwright codegen -o tests/raw-recording.spec.ts https://cdms-preprod.ripplr.in

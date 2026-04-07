@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "FileChanged": [
+      {
+        "matcher": "tests/raw-recording.spec.ts",
+        "hooks": [
+          {
+            "type": "command",
+            "statusMessage": "Codegen recording detected — refactoring into POM...",
+            "command": "node -e \"process.stdout.write(JSON.stringify({hookSpecificOutput:{hookEventName:'FileChanged',additionalContext:'tests/raw-recording.spec.ts was just saved with a new Playwright codegen recording. Read this file immediately and refactor it into structured Page Object Model code: (1) extract all UI interactions into a new method or class in pages/ following the style of Aupload.page.js, (2) if it involves a new FC/brand add it to getFCName, getBrandName, and getFilePath maps in pages/Aupload.page.js, (3) add a helper function in utils/uploadTestHelper.js if needed, (4) write a clean test spec in the appropriate tests/ subfolder. Do not keep the raw recording file as the final output.'}}));\""
+          }
+        ]
+      }
+    ]
+  }
+}

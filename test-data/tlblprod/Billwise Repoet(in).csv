@@ -1,0 +1,17 @@
+,,Bill Wise Sales,,Date:,1/4/2026,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,INTELLIGENT RETAIL PVT LTD,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,Beat :,List of Beats,,From Date :,1/4/2026,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,Salesperson :,List of Salesperson,,To Date :,1/4/2026,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,Class : ,List of Classes,,Bill From:,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,product,List of Products,,Bill To:,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,Brand :,List of Brands,,Party: ,List of Outlets,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,Type :,List of Channels,,Party Type,List of Party Type,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+Sr No,PARTY_HUL CODE,Party Code,Party,Outlet_category,Party GSTIN Number,Bill Number,MOC,Bill Date,BasePack Code,Product code,Product Description,HSN Code,MRP,BASIC RATE,TUR,PKD,Batch Code,Expiry Date,Units,Free Qty,Gross Sales,Scheme Disc,Scheme with TAX,RS Discount,TOT Disc,Total Disc,Taxable Amount,SGST Amount,CGST Amount,IGST Amount,Total Tax,Total Tax %,Net Sales,Sch Per Unit( After Tax),Bill Cap
+11,HUL-43A633D-P24493,D-P24493,S S Store-D,NA,,MYS00005,202604,1/4/2026,26691,CLRS701,CLINIC PLUS STRONG & SMOOTH 6.5ML                 ,3305.10.90,1,0.76,0.801,226,01B6096001,14-08-2027,16,0,12.21,0.24,0.26,0,0,0.24,11.96,0.3,0.3,0,0.6,5,12.56,0.02,N
+12,HUL-43A633D-P24493,D-P24493,S S Store-D,NA,,MYS00005,202604,1/4/2026,11047,CLRS001,CP STRONG&LONG SH SOUTH 6ML,3305.10.90,1,0.76,0.801,326,01C6096000,21-09-2027,960,0,732.48,14.65,15.38,0,0,14.65,717.83,17.95,17.95,0,35.89,5,753.72,0.02,N
