@@ -1,4 +1,5 @@
 const { loginAndNavigateToSubModule } = require('../utils/loginUtils');
+const salesOrderLocators = require('../locators/salesOrder.locators');
 
 exports.SalesOrderPage = class SalesOrderPage {
     constructor(page) {
@@ -6,11 +7,12 @@ exports.SalesOrderPage = class SalesOrderPage {
     }
 
     async viewOrderJourney(username, password, baseURL) {
+        const l = salesOrderLocators(this.page);
         await this.page.goto(baseURL);
         await loginAndNavigateToSubModule(this.page, username, password, 'Order Management', 'Sales Order');
-        await this.page.locator('.sc-bczRLJ.VVTgw').first().click();
-        await this.page.getByRole('tab', { name: 'Order Journey' }).click();
-        await this.page.getByRole('button', { name: 'right Order Details: Store' }).click();
+        await l.firstSalesOrderRow.click();
+        await l.orderJourneyTab.click();
+        await l.orderDetailsStoreButton.click();
         return true;
     }
 };

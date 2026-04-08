@@ -1,0 +1,4 @@
+Distributor Code,Distributor Name,Salesman Code,Salesman Name,Route Code,Route Name,Bill Number,Bill Date,Retailer Code,Customer Name,Sales Qty,Gross Amount,Scheme Discount Amount,Other Discount Amount,DB Discount,Tax Amount,Net Amount,Credit Adjustment,Bill receivable amount
+7083698,Intelligent Retail Private Limited,KA00814,Sridhar,R27,KG HALLI 2- Fri,BABCDHT08222,30/05/2025,708369800192,AL.QUBA MEDICAL,93,3479.06046,19.934347,0,0,622.642702,766,30,766
+7083698,Intelligent Retail Private Limited,KA00814,Sridhar,R27,KG HALLI 2- Fri,BABCDHT08223,30/05/2025,708369800273,K.G.N. BAKERY,294,3161.0252,44.220992,0,0,445.106864,125,20,125
+7083698,Intelligent Retail Private Limited,KA00814,Sridhar,R27,KG HALLI 2- Fri,BABCDHT08224,30/05/2025,7083698086879,K.G.N. GJJ,294,3161.0252,44.220992,0,0,445.106864,125,20,125

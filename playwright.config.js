@@ -12,6 +12,7 @@ export default defineConfig({
     baseURL: process.env.BASE_URL || 'http://localhost:3000',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
+    permissions: ['geolocation'],
   },
   reporter: [['html', { outputFolder: 'reports', open: 'never' }]],
   projects: [

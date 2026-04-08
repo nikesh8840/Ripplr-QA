@@ -1,6 +1,6 @@
-
 const invoiceData = require('../test-data/return/SalesreturnInvoices');
 const { loginAndNavigateToSubModule } = require('../utils/loginUtils');
+const salesReturnLocators = require('../locators/salesReturn.locators');
 
 exports.ReturnPage = class ReturnPage {
     constructor(page) {
@@ -10,59 +10,52 @@ exports.ReturnPage = class ReturnPage {
     async createReturn(username, password) {
         try {
             const invoices = invoiceData.invoiceData;
-            
-            // Use the reusable login function
+            const l = salesReturnLocators(this.page);
+
             const loginSuccess = await loginAndNavigateToSubModule(
-                this.page, 
-                username, 
-                password, 
-                'Order Management', 
-                'Returns'
+                this.page, username, password, 'Order Management', 'Returns'
             );
-            
             if (!loginSuccess) {
                 console.error('Login or navigation failed');
                 return false;
             }
-        await this.page.getByRole('button', { name: 'Add Sales return' }).click();
-        await this.page.getByRole('textbox', { name: 'Search search icon' }).click();
-        await this.page.getByRole('textbox', { name: 'Search search icon' }).fill(invoices[0]);
-        await this.page.getByRole('button', { name: 'Search' }).click();
-        await this.page.locator('.bSLZcG').nth(0).click();
-        await this.page.getByRole('textbox', { name: 'search icon' }).click();
-        await this.page.locator('input[type="checkbox"]').nth(0).check();
-        const returnableQty =await this.page.locator('tbody tr td:nth-child(2) .sc-bczRLJ').innerText();
-        const returnQty = Math.ceil(returnableQty / 2);
 
-        // Click on the input number component and fill the value
-        await this.page.locator('tbody tr td:nth-child(3) .ant-input-number input').click();
-        await this.page.locator('tbody tr td:nth-child(3) .ant-input-number input').fill(returnQty.toString());
-        
-        await this.page.locator('td button[type="button"]:has-text("Add")').click();
-        // await this.page.locator('td button[type="button"]:has-text("Add")').click();
-        await this.page.waitForTimeout(2000);
-        // Wait for dropdown to appear and click on reason dropdown
-        await this.page.waitForSelector('tbody tr td .ant-select-selection-item', { timeout: 5000 });
-        await this.page.locator('tbody tr td .ant-select-selection-item').click();
-        await this.page.waitForTimeout(1000);
-        
-        // Wait for dropdown options to appear and select "Not Fast Moving"
-        await this.page.waitForSelector('.ant-select-dropdown', { timeout: 5000 });
-        await this.page.getByTitle('Not Fast Moving').locator('div').click();
-        await this.page.waitForTimeout(1000);
-        await this.page.getByRole('spinbutton', { name: 'Qty*' }).click();
-        await this.page.getByRole('spinbutton', { name: 'Qty*' }).fill(returnQty.toString());
-        await this.page.waitForTimeout(1000);
-        await this.page.getByRole('button', { name: 'Save' }).click();
-        await this.page.locator('tbody tr:first-child td img').click();
-        await this.page.waitForTimeout(1000);
-        await this.page.locator('.gCJfbe').click();
-        await this.page.waitForTimeout(1000);
-        await this.page.getByRole('button', { name: '×' }).click();
-        // await this.page.getByText('Completed').first().click();
+            await l.addSalesReturnButton.click();
+            await l.invoiceSearchInput.click();
+            await l.invoiceSearchInput.fill(invoices[0]);
+            await l.searchButton.click();
+            await l.firstReturnItem.click();
+            await l.productSearchInput.click();
+            await l.firstCheckbox.check();
 
-            // Check return status
-            const returnstatus = await this.page.locator('tbody tr:first-child td .hYzLpj').innerText();
+            const returnableQty = await l.returnableQtyCell.innerText();
+            const returnQty = Math.ceil(returnableQty / 2);
+
+            await l.returnQtyInput.click();
+            await l.returnQtyInput.fill(returnQty.toString());
+            await l.addButton.click();
+            await this.page.waitForTimeout(2000);
+
+            await this.page.waitForSelector('tbody tr td .ant-select-selection-item', { timeout: 5000 });
+            await l.reasonDropdown.click();
+            await this.page.waitForTimeout(1000);
+
+            await this.page.waitForSelector('.ant-select-dropdown', { timeout: 5000 });
+            await l.notFastMovingOption.click();
+            await this.page.waitForTimeout(1000);
+
+            await l.qtySummaryInput.click();
+            await l.qtySummaryInput.fill(returnQty.toString());
+            await this.page.waitForTimeout(1000);
+            await l.saveButton.click();
+
+            await l.firstRowThumbnail.click();
+            await this.page.waitForTimeout(1000);
+            await l.expandButton.click();
+            await this.page.waitForTimeout(1000);
+            await l.closeButton.click();
+
+            const returnstatus = await l.returnStatusCell.innerText();
             console.log('Return Status:', returnstatus);
             if (returnstatus.includes('Completed') || returnstatus.includes('WMS Failed')) {
                 console.log('Return process completed successfully.');
@@ -71,22 +64,9 @@ exports.ReturnPage = class ReturnPage {
                 console.error('Return process did not complete as expected.');
                 return false;
             }
-            
         } catch (err) {
             console.error('Return process failed:', err);
             return false;
         }
-          }
+    }
 };
-
-
-
-
-
-
-
-
-
-
-
-

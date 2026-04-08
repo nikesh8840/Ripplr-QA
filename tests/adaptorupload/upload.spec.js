@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
 const config = require('../../config/base.config');
-const { simpleUpload, singleFileUpload, fcBrandUpload, twoFileUploadWithIncrement, threeFileUploadWithIncrement } = require('../../utils/uploadTestHelper');
+const { simpleUpload, singleFileUpload, fcBrandUpload, singleFileUploadWithIncrement, twoFileUploadWithIncrement, threeFileUploadWithIncrement } = require('../../utils/uploadTestHelper');
 
 // Simple Upload Tests
 // test('Upload GRN file', async ({ page }) => {
@@ -40,7 +40,20 @@ const { simpleUpload, singleFileUpload, fcBrandUpload, twoFileUploadWithIncremen
 // });
 
 // test('Upload BTML:BRIT sales order file', async ({ page }) => {
-//     const result = await fcBrandUpload(page, config.baseURLpreprod, 'Sales Order', 'btml', 'britannia');
+//     const result = await threeFileUploadWithIncrement(
+//         page, config.baseURLpreprod, 'btml', 'britannia',
+//         ['m1.csv', 'h1.csv', 'sr.csv'],
+//         ['Invoice No', 'Invoice No', 'Invoice No']
+//     );
+//     expect(result).toBeTruthy();
+// });
+
+// test('Upload plvm:nestle sales order file', async ({ page }) => {
+//     const result = await threeFileUploadWithIncrement(
+//         page, config.baseURLpreprod, 'plvm', 'nestle',
+//         ['ms3.csv', 'bl3.csv', 'ss3.csv'],
+//         ['Bill Number / Sales Return Number', 'Sales Invoice Number', 'Bill Number']
+//     );
 //     expect(result).toBeTruthy();
 // });
 
@@ -55,8 +68,16 @@ const { simpleUpload, singleFileUpload, fcBrandUpload, twoFileUploadWithIncremen
 // });
 
 // Two-File Uploads with Bill Increment
-test('Upload BGRD:MARICO sales order file', async ({ page }) => {
-    const result = await twoFileUploadWithIncrement(page, config.baseURLpreprod, 'bgrd', 'mrco');
+// test('Upload BGRD:MARICO sales order file', async ({ page }) => {
+//     const result = await singleFileUploadWithIncrement(page, config.baseURLpreprod, 'bgrd', 'mrco');
+//     expect(result).toBeTruthy();
+// });
+
+test('Upload BYTI:GDJGT sales order file', async ({ page }) => {
+    const result = await twoFileUploadWithIncrement(page, config.baseURLpreprod, 'byti', 'gdj',
+        ['u.csv', 'c.csv'],
+        ['Bill No', 'CN_Adjusted_Bill_No']
+    );
     expect(result).toBeTruthy();
 });
 

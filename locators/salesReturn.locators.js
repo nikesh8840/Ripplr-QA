@@ -1,36 +1,36 @@
 const salesReturnLocators = (page) => ({
-    // Actions
+    // --- Actions ---
     addSalesReturnButton:       page.getByRole('button', { name: 'Add Sales return' }),
     searchButton:               page.getByRole('button', { name: 'Search' }),
     saveButton:                 page.getByRole('button', { name: 'Save' }),
     closeButton:                page.getByRole('button', { name: '×' }),
+    addButton:                  page.locator('td button[type="button"]:has-text("Add")'),
 
-    // Invoice search
+    // --- Invoice / product search ---
     invoiceSearchInput:         page.getByRole('textbox', { name: 'Search search icon' }),
     productSearchInput:         page.getByRole('textbox', { name: 'search icon' }),
 
-    // Return list
+    // --- Return list ---
     firstReturnItem:            page.locator('.bSLZcG').nth(0),
     firstCheckbox:              page.locator('input[type="checkbox"]').nth(0),
 
-    // Return qty fields
+    // --- Qty fields ---
     returnableQtyCell:          page.locator('tbody tr td:nth-child(2) .sc-bczRLJ'),
     returnQtyInput:             page.locator('tbody tr td:nth-child(3) .ant-input-number input'),
-    addButton:                  page.locator('td button[type="button"]:has-text("Add")'),
 
-    // Reason dropdown
+    // --- Reason dropdown ---
     reasonDropdown:             page.locator('tbody tr td .ant-select-selection-item'),
     reasonDropdownMenu:         page.locator('.ant-select-dropdown'),
     notFastMovingOption:        page.getByTitle('Not Fast Moving').locator('div'),
 
-    // Qty spinbutton (summary row)
+    // --- Summary qty ---
     qtySummaryInput:            page.getByRole('spinbutton', { name: 'Qty*' }),
 
-    // Row actions
+    // --- Row actions ---
     firstRowThumbnail:          page.locator('tbody tr:first-child td img'),
     expandButton:               page.locator('.gCJfbe'),
 
-    // Status
+    // --- Status ---
     returnStatusCell:           page.locator('tbody tr:first-child td .hYzLpj'),
 });
 

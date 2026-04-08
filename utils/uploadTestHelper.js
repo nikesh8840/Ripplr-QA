@@ -43,15 +43,13 @@ async function singleFileUploadWithIncrement(page, baseURL, fc, brand, csvFileNa
 }
 
 // Helper for 2-file uploads with bill number increment (e.g., sales order + adjustment)
-async function twoFileUploadWithIncrement(page, baseURL, fc, brand, csvFileNames = ['salesmarico.csv', 'credit.csv']) {
+async function twoFileUploadWithIncrement(page, baseURL, fc, brand, csvFileNames = ['salesmarico.csv', 'credit.csv'], columnHeaders = ['Bill Number', 'CN_Adjusted_Bill_No']) {
     const dataPath = path.resolve(__dirname, `../test-data/${fc}-${brand}`);
     
-    // Increment bill numbers for both files
-    const file1Path = path.join(dataPath, csvFileNames[0]);
-    const file2Path = path.join(dataPath, csvFileNames[1]);
-    
-    await incrementBillNumbers(file1Path, 'Bill Number');
-    await incrementBillNumbers(file2Path, 'Bill Number');
+    for (let i = 0; i < csvFileNames.length; i++) {
+        const filePath = path.join(dataPath, csvFileNames[i]);
+        await incrementBillNumbers(filePath, columnHeaders[i]);
+    }
     
     // Perform upload
     const uploadfile = new Uploadfile(page);

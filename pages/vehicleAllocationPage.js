@@ -1,39 +1,28 @@
 const invoiceData = require('../test-data/allocation/vehicleallocationdata');
 const { getFCName, getBrandName } = require('../utils/fcbrands');
+const loginLocators = require('../locators/login.locators');
+const vaLocators = require('../locators/vehicleAllocation.locators');
+
 exports.VehicleAllocationPage = class VehicleAllocationPage {
     constructor(page) {
         this.page = page;
     }
 
-
     async processSelectionInvoice() {
         const invoices = invoiceData.invoiceData;
+        const l = vaLocators(this.page);
         try {
-            for(let i = 0; i < invoices.length; i++) {
+            for (let i = 0; i < invoices.length; i++) {
                 console.log(`Processing invoice: ${invoices[i]}`);
-                
-                // Clear and fill search field
-                await this.page.locator("input[placeholder='Search by invoice number']").click();
-                await this.page.locator("input[placeholder='Search by invoice number']").clear();
-                await this.page.locator("input[placeholder='Search by invoice number']").fill(invoices[i]);
-                
-                // Click search button
-                await this.page.getByRole('button', { name: 'Search' }).click();
-                
-                // Wait for search results to load
+                await l.invoiceSearchInput.click();
+                await l.invoiceSearchInput.clear();
+                await l.invoiceSearchInput.fill(invoices[i]);
+                await l.searchButton.click();
                 await this.page.waitForTimeout(2000);
-                
-                // Wait for the specific row with the invoice to appear
                 await this.page.waitForSelector(`tr:has-text("${invoices[i]}")`, { timeout: 10000 });
-                
-                // Find and click the checkbox for the specific invoice row
-                const invoiceRow = this.page.locator(`tr:has-text("${invoices[i]}")`);
-                await invoiceRow.locator('.ant-checkbox').click();
-                
+                await l.invoiceRowCheckbox(invoices[i]).click();
                 console.log(`Successfully selected invoice: ${invoices[i]}`);
-                
-                // Clear search field for next iteration
-                await this.page.locator("input[placeholder='Search by invoice number']").clear();
+                await l.invoiceSearchInput.clear();
             }
             return true;
         } catch (err) {
@@ -42,207 +31,161 @@ exports.VehicleAllocationPage = class VehicleAllocationPage {
         }
     }
 
-    
-
     async allocateVehicle(username, password) {
+        const login = loginLocators(this.page);
+        const l = vaLocators(this.page);
         console.log('invoiceData', invoiceData);
         try {
-            await this.page.getByRole('textbox', { name: 'User ID User ID' }).click();
-            await this.page.getByRole('textbox', { name: 'User ID User ID' }).fill(username);
-            await this.page.getByRole('textbox', { name: 'Password Password' }).click();
-            await this.page.getByRole('textbox', { name: 'Password Password' }).fill(password);
-            await this.page.getByRole('button', { name: 'Login' }).click();
+            await login.usernameInput.click();
+            await login.usernameInput.fill(username);
+            await login.passwordInput.click();
+            await login.passwordInput.fill(password);
+            await login.loginButton.click();
 
-            await this.page.getByText('Logistics Management').click();
-            await this.page.getByRole('link', { name: 'Delivery Allocation' }).click();
-            await this.page.getByRole('button', { name: 'Create Delivery Allocation' }).click();
-
+            await l.logisticsManagementMenu.click();
+            await l.deliveryAllocationLink.click();
+            await l.createDeliveryAllocationButton.click();
 
             await this.processSelectionInvoice();
 
-            // ✅ FC Filter with Wait
-            // await this.page.getByRole('combobox', { name: 'FC(s) Select FC(s)' }).click();
-            // await this.page.getByRole('combobox', { name: 'FC(s) Select FC(s)' }).fill('btml');
-            // await this.page.waitForSelector('text=BTML: BTM', { timeout: 5000 });
-            // await this.page.getByText('BTML: BTM').click();
+            await l.checkboxNth(1).click();
 
-            // ✅ Invoice Filter 
-            // await this.page.getByRole('combobox', { name: 'Search Search by invoice number' }).click();
-            // await this.page.getByRole('combobox', { name: 'Search Search by invoice number' }).fill('btml');
-            // await this.page.waitForSelector('text=BTML: BTM', { timeout: 5000 });
-            // await this.page.getByText('BTML: BTM').click();
+            await l.allocateVehicleButton.click();
 
-            // ✅ Brand Filter with Wait
-            // await this.page.locator('label').filter({ hasText: 'Brands Select Brand(s)' }).locator('div').nth(2).click();
-            // await this.page.getByRole('combobox', { name: 'Brands Select Brand(s)' }).click();
-            // await this.page.getByRole('combobox', { name: 'Brands Select Brand(s)' }).fill('bri');
-            // await this.page.waitForSelector('text=BRIT: Britania', { timeout: 5000 });
-            // await this.page.getByText('BRIT: Britania').click();
+            await l.deliveryTypeDropdown.click();
+            await l.bothOption.click();
 
-            // await this.page.getByRole('button', { name: 'Search' }).click();
-            // await this.page.getByRole('listitem', { name: '2' }).locator('a').click();
-            await this.page.locator('.ant-checkbox').nth(1).click();
-            // await this.page.locator('.ant-checkbox').nth(2).click();
-            // await this.page.locator('.ant-checkbox').nth(3).click();
-            // await this.page.locator('.ant-checkbox').nth(4).click();
-            // await this.page.locator('.ant-checkbox').nth(5).click();
-            // await this.page.locator('.ant-checkbox').nth(6).click();
-            // await this.page.locator('.ant-checkbox').nth(7).click();
-            // await this.page.locator('.ant-checkbox').nth(8).click();
-            // await this.page.locator('.ant-checkbox').nth(9).click();
+            await l.vehicleTypeDropdown.click();
+            await l.regularOption.click();
 
-            await this.page.getByRole('button', { name: 'Allocate Vehicle' }).click();
-
-            await this.page.locator('.ant-form-item-control-input-content').first().click();
-            await this.page.getByTitle('Both').locator('div').click();
-
-            await this.page.locator('.ant-form-item-control-input-content').nth(1).click();
-            await this.page.getByTitle('Regular').locator('div').click();
-
-            await this.page.locator('.ant-form-item-control-input-content').nth(2).click();
+            await l.vehicleSubTypeDropdown.click();
             await this.page.waitForSelector('div[title="Regular"]', { timeout: 5000 });
-            await this.page.getByText('Regular').nth(4).click();
+            await l.regularText.click();
 
-            await this.page.getByRole('textbox', { name: '*Vehicle No' }).click();
-            await this.page.getByRole('textbox', { name: '*Vehicle No' }).fill('KA8JD9302');
+            await l.vehicleNumberInput.click();
+            await l.vehicleNumberInput.fill('KA8JD9302');
 
-            await this.page.getByRole('textbox', { name: '*Driver', exact: true }).click();
-            await this.page.getByRole('textbox', { name: '*Driver', exact: true }).fill('NIKesHh A');
+            await l.driverInput.click();
+            await l.driverInput.fill('NIKesHh A');
 
-            await this.page.getByRole('textbox', { name: '*Vendor' }).click();
-            await this.page.getByRole('textbox', { name: '*Vendor' }).fill('dfs');
+            await l.vendorInput.click();
+            await l.vendorInput.fill('dfs');
 
-            await this.page.locator('div').filter({ hasText: /^\*Driver Mobile Number$/ }).nth(2).click();
-            await this.page.getByRole('textbox', { name: '*Driver Mobile Number' }).click();
-            await this.page.getByRole('textbox', { name: '*Driver Mobile Number' }).fill('8840576893');
+            await l.driverMobileLabel.click();
+            await l.driverMobileInput.click();
+            await l.driverMobileInput.fill('8840576893');
 
-            await this.page.locator('.ant-form-item-control-input-content').last().click();
-            await this.page.locator('.ant-form-item-control-input-content input').last().fill('del');
-            await this.page.getByTitle('Delivery Boy').locator('div').click();
+            await l.deliveryBoyDropdownLast.click();
+            await l.deliveryBoyInputLast.fill('del');
+            await l.deliveryBoyOption.click();
 
-            await this.page.getByRole('button', { name: 'Submit' }).click();
+            await l.submitButton.click();
             await this.page.waitForTimeout(3000);
-
             return true;
         } catch (err) {
             console.error('Login failed or form interaction issue:', err);
             return false;
         }
     }
+
     async allocateVehiclewithfcbrand(username, password, fc, brand) {
+        const login = loginLocators(this.page);
+        const l = vaLocators(this.page);
         try {
-            await this.page.getByRole('textbox', { name: 'User ID User ID' }).click();
-            await this.page.getByRole('textbox', { name: 'User ID User ID' }).fill(username);
-            await this.page.getByRole('textbox', { name: 'Password Password' }).click();
-            await this.page.getByRole('textbox', { name: 'Password Password' }).fill(password);
-            await this.page.getByRole('button', { name: 'Login' }).click();
+            await login.usernameInput.click();
+            await login.usernameInput.fill(username);
+            await login.passwordInput.click();
+            await login.passwordInput.fill(password);
+            await login.loginButton.click();
 
-            await this.page.getByText('Logistics Management').click();
-            await this.page.getByRole('link', { name: 'Delivery Allocation' }).click();
-            await this.page.getByRole('button', { name: 'Create Delivery Allocation' }).click();
+            await l.logisticsManagementMenu.click();
+            await l.deliveryAllocationLink.click();
+            await l.createDeliveryAllocationButton.click();
 
-
-            // ✅ FC Filter with Wait and Retry
             const fcName = getFCName(fc);
             let fcSelected = false;
             let fcRetryCount = 0;
-            const maxFcRetries = 3;
-            
-            while (!fcSelected && fcRetryCount < maxFcRetries) {
+            while (!fcSelected && fcRetryCount < 3) {
                 try {
-                    await this.page.getByRole('combobox', { name: 'FC(s) Select FC(s)' }).click();
-                    await this.page.getByRole('combobox', { name: 'FC(s) Select FC(s)' }).fill(fc);
+                    await l.fcFilterCombobox.click();
+                    await l.fcFilterCombobox.fill(fc);
                     await this.page.waitForSelector(`text=${fcName}`, { timeout: 5000 });
-                    await this.page.getByText(fcName).click();
+                    await l.fcText(fcName).click();
                     fcSelected = true;
                     console.log(`FC selection successful on attempt ${fcRetryCount + 1}`);
                 } catch (error) {
                     fcRetryCount++;
                     console.log(`FC selection failed on attempt ${fcRetryCount}, retrying...`);
-                    if (fcRetryCount >= maxFcRetries) {
-                        console.error(`FC selection failed after ${maxFcRetries} attempts:`, error);
-                        throw error;
-                    }
-                    await this.page.waitForTimeout(1000); // Wait 1 second before retry
+                    if (fcRetryCount >= 3) throw error;
+                    await this.page.waitForTimeout(1000);
                 }
             }
 
             const brandName = getBrandName(brand);
             let brandSelected = false;
             let retryCount = 0;
-            const maxRetries = 3;
-            
-            while (!brandSelected && retryCount < maxRetries) {
+            while (!brandSelected && retryCount < 3) {
                 try {
-                    await this.page.getByRole('combobox', { name: 'Brands Select Brand(s)' }).click();
-                    await this.page.getByRole('combobox', { name: 'Brands Select Brand(s)' }).fill(brand);
+                    await l.brandFilterCombobox.click();
+                    await l.brandFilterCombobox.fill(brand);
                     await this.page.waitForSelector(`text=${brandName}`, { timeout: 5000 });
-                    await this.page.getByText(brandName).click();
+                    await l.brandText(brandName).click();
                     brandSelected = true;
                     console.log(`Brand selection successful on attempt ${retryCount + 1}`);
                 } catch (error) {
                     retryCount++;
                     console.log(`Brand selection failed on attempt ${retryCount}, retrying...`);
-                    if (retryCount >= maxRetries) {
-                        console.error(`Brand selection failed after ${maxRetries} attempts:`, error);
-                        throw error;
-                    }
-                    await this.page.waitForTimeout(1000); // Wait 1 second before retry
+                    if (retryCount >= 3) throw error;
+                    await this.page.waitForTimeout(1000);
                 }
             }
 
             await this.page.waitForTimeout(3000);
+            await l.searchButton.click();
+            await l.checkboxNth(1).click();
+            await l.checkboxNth(2).click();
+            await l.checkboxNth(3).click();
 
-            await this.page.getByRole('button', { name: 'Search' }).click();
-            await this.page.locator('.ant-checkbox').nth(1).click();
-            await this.page.locator('.ant-checkbox').nth(2).click();
-            await this.page.locator('.ant-checkbox').nth(3).click();
+            await l.allocateVehicleButton.click();
 
-            await this.page.getByRole('button', { name: 'Allocate Vehicle' }).click();
-            
-            // Skip button is optional - wait only 2 seconds for it to appear
             try {
-                const skipButton = this.page.getByRole('button', { name: 'Skip' });
-                // Check if button is visible within 2 seconds
-                await skipButton.waitFor({ state: 'visible', timeout: 2000 });
-                await skipButton.click();
+                await l.skipButton.waitFor({ state: 'visible', timeout: 2000 });
+                await l.skipButton.click();
                 console.log('Skip button found and clicked');
             } catch (error) {
                 console.log('Skip button did not appear within 2 seconds, continuing...');
             }
 
-            await this.page.locator('.ant-form-item-control-input-content').first().click();
-            await this.page.getByTitle('Both').locator('div').click();
+            await l.deliveryTypeDropdown.click();
+            await l.bothOption.click();
 
-            await this.page.locator('.ant-form-item-control-input-content').nth(1).click();
-            await this.page.getByTitle('Regular').locator('div').click();
+            await l.vehicleTypeDropdown.click();
+            await l.regularOption.click();
 
-            await this.page.locator('.ant-form-item-control-input-content').nth(2).click();
+            await l.vehicleSubTypeDropdown.click();
             await this.page.waitForSelector('div[title="Regular"]', { timeout: 5000 });
-            await this.page.getByText('Regular').nth(4).click();
+            await l.regularText.click();
 
-            await this.page.getByRole('textbox', { name: 'Vehicle Number*' }).click();
-            await this.page.getByRole('textbox', { name: 'Vehicle Number*' }).fill('KA8JD9302');
+            await l.vehicleNumberInputV2.click();
+            await l.vehicleNumberInputV2.fill('KA8JD9302');
 
-            await this.page.getByRole('textbox', { name: 'Driver Name *', exact: true }).click();
-            await this.page.getByRole('textbox', { name: 'Driver Name *', exact: true }).fill('NIKesHh A');
+            await l.driverNameInputV2.click();
+            await l.driverNameInputV2.fill('NIKesHh A');
 
-            await this.page.getByRole('textbox', { name: 'Vendor Name *' }).click();
-            await this.page.getByRole('textbox', { name: 'Vendor Name *' }).fill('Test Vendor');
+            await l.vendorNameInputV2.click();
+            await l.vendorNameInputV2.fill('Test Vendor');
 
-            // await this.page.locator('div').filter({ hasText: /^\*Driver Number$/ }).nth(2).click();
-            await this.page.getByRole('textbox', { name: 'Driver Number *' }).click();
-            await this.page.getByRole('textbox', { name: 'Driver Number *' }).fill('8840576893');
+            await l.driverNumberInputV2.click();
+            await l.driverNumberInputV2.fill('8840576893');
 
-            await this.page.locator('.ant-form-item-control-input-content').last().click();
-            await this.page.locator('.ant-form-item-control-input-content input').last().fill('del');
-            await this.page.getByTitle('Delivery Boy').locator('div').click();
+            await l.deliveryBoyDropdownLast.click();
+            await l.deliveryBoyInputLast.fill('del');
+            await l.deliveryBoyOption.click();
 
-            await this.page.getByRole('button', { name: 'Submit' }).click();
-            await this.page.getByRole('button', { name: 'Confirm' }).click();
-            await this.page.getByRole('button', { name: 'Confirm' }).click();
+            await l.submitButton.click();
+            await l.confirmButton.click();
+            await l.confirmButton.click();
             await this.page.waitForTimeout(3000);
-
             return true;
         } catch (err) {
             console.error('Login failed or form interaction issue:', err);

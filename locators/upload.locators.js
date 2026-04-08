@@ -1,43 +1,49 @@
 const uploadLocators = (page) => ({
-    // Navigation
-    adapterUploadsLink:     page.getByRole('link', { name: 'Adapter Uploads' }),
+    // --- Navigation ---
+    adapterUploadsLink:         page.getByRole('link', { name: 'Adapter Uploads' }),
 
-    // Upload modal - open
-    uploadButton:           page.getByRole('button', { name: 'Upload' }),
-    uploadCsvLabel:         page.getByLabel('Upload Csv').locator('label span').nth(1),
+    // --- Open upload modal ---
+    uploadButton:               page.getByRole('button', { name: 'Upload' }),
+    uploadCsvLabel:             page.getByLabel('Upload Csv').locator('label span').nth(1),
 
-    // Upload form - FC/Brand (dynamic methods, used in UploadSalesOrder / UploadSalesOrdertwo)
-    fcInput:                page.locator('.cuNTTY:first-child .ant-form-item-control input'),
-    brandCombobox:          page.getByRole('combobox', { name: '*Brand' }),
+    // --- Upload form: document type ---
+    docTypeTitle: (type)     => page.getByTitle(type).locator('div'),
 
-    // Upload form - FC/Brand (legacy, used in Upload / UploadSinglefile)
-    fcInputLegacy5:         page.locator('#rc_select_5'),
-    fcInputLegacy6:         page.locator('#rc_select_6'),
-    fcTypeFilter:           page.locator('div').filter({ hasText: /^Fc Type$/ }).nth(4),
+    // --- Upload form: FC/Brand — dynamic methods (UploadSalesOrder / UploadSalesOrdertwo / UploadSinglefileFcBrand) ---
+    fcInput:                    page.locator('.cuNTTY:first-child .ant-form-item-control input'),
+    brandCombobox:              page.getByRole('combobox', { name: '*Brand' }),
 
-    // File inputs
-    fileInput:              page.locator('input[type="file"]'),
-    fileInputNth: (n)    => page.locator('div.ant-space.ant-space-horizontal.ant-space-align-center input[type="file"]').nth(n),
+    // --- Upload form: FC/Brand — legacy fixed selectors (Upload / UploadSinglefile / UploadSinglefileforermkSMSNG) ---
+    fcTypeFilter:               page.locator('div').filter({ hasText: /^Fc Type$/ }).nth(4),
+    fcInputLegacy5:             page.locator('#rc_select_5'),
+    fcInputLegacy6:             page.locator('#rc_select_6'),
 
-    // Actions
-    submitButton:           page.getByRole('button', { name: 'Submit' }),
-    searchButton:           page.getByRole('button', { name: 'Search' }),
-    closeButton:            page.getByRole('button', { name: 'Close' }),
+    // --- Dynamic text options (FC name / Brand name resolved at runtime) ---
+    textOption: (text)       => page.getByText(text),
 
-    // Search/filter panel
-    fileTypeCombobox:       page.getByRole('combobox', { name: 'Select File Types' }),
-    fcFilterCombobox:       page.getByRole('combobox', { name: 'FC Select FC' }),
-    brandFilterLabel:       page.locator('label').filter({ hasText: 'Brand(s) Select Brand(s)' }).locator('div').nth(2),
-    brandFilterCombobox:    page.getByRole('combobox', { name: 'Brand(s) Select Brand(s)' }),
+    // --- File inputs ---
+    singleFileInput:            page.locator('input[type="file"]'),
+    fileInputNth: (n)        => page.locator('div.ant-space.ant-space-horizontal.ant-space-align-center input[type="file"]').nth(n),
 
-    // Results table
-    uploadedTimeCell:       page.locator('tr:first-child td:nth-child(6) div:nth-child(2) span'),
-    syncIcon:               page.locator('tr:first-child .anticon-sync'),
-    eyeIcon:                page.locator("tr:first-child img[src*='eye-icon']"),
+    // --- Form actions ---
+    submitButton:               page.getByRole('button', { name: 'Submit' }),
+    searchButton:               page.getByRole('button', { name: 'Search' }),
+    closeButton:                page.getByRole('button', { name: 'Close' }),
 
-    // Processing modal
-    progressCount:          page.locator('.ant-tag-blue strong'),
-    modalRefreshButton:     page.locator("div[class='ant-modal-body'] div[class='sc-bczRLJ sc-gsnTZi hRYqBu jnFvAE']"),
+    // --- Search/filter panel ---
+    fileTypeCombobox:           page.getByRole('combobox', { name: 'Select File Types' }),
+    fcFilterCombobox:           page.getByRole('combobox', { name: 'FC Select FC' }),
+    brandFilterLabel:           page.locator('label').filter({ hasText: 'Brand(s) Select Brand(s)' }).locator('div').nth(2),
+    brandFilterCombobox:        page.getByRole('combobox', { name: 'Brand(s) Select Brand(s)' }),
+
+    // --- Results table ---
+    uploadedTimeCell:           page.locator('tr:first-child td:nth-child(6) div:nth-child(2) span'),
+    syncIcon:                   page.locator('tr:first-child .anticon-sync'),
+    eyeIcon:                    page.locator("tr:first-child img[src*='eye-icon']"),
+
+    // --- Processing modal ---
+    progressCount:              page.locator('.ant-tag-blue strong'),
+    modalRefreshButton:         page.locator("div[class='ant-modal-body'] div[class='sc-bczRLJ sc-gsnTZi hRYqBu jnFvAE']"),
 });
 
 module.exports = uploadLocators;

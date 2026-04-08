@@ -1,35 +1,40 @@
+const loginLocators = require('../locators/login.locators');
+const deliveredLocators = require('../locators/delivered.locators');
+
 exports.DeliveredPage = class DeliveredPage {
     constructor(page) {
         this.page = page;
     }
 
     async delivered(username, password) {
-      try {
-        await this.page.getByRole('textbox', { name: 'User ID User ID' }).click();
-        await this.page.getByRole('textbox', { name: 'User ID User ID' }).fill(username);
-        await this.page.getByRole('button', { name: 'Login' }).click();
-        await this.page.getByRole('textbox', { name: 'Password Password' }).click();
-        await this.page.getByRole('textbox', { name: 'Password Password' }).fill(password);
-        await this.page.getByRole('button', { name: 'Login' }).click();
-        await this.page.getByText('Logistics Management').click();
-        await this.page.getByRole('link', { name: 'Return To Fc' }).click();
-        await this.page.locator('tr .ccyvke a').nth(0).click();
-        await this.page.getByText('vehicle allocated').first().click();
-        await this.page.getByText('Delivered', { exact: true }).click();
-        await this.page.getByRole('button', { name: 'OK' }).click();
-        await this.page.getByRole('button', { name: 'Yes' }).click();
-        await this.page.getByRole('button', { name: 'right Delivery Details' }).click();
-        await this.page.getByRole('button', { name: 'Update' }).click();
-        await this.page.getByRole('radio', { name: 'Invoice Returned' }).check();
-        await this.page.getByRole('button', { name: 'right Collection Details:' }).click();
-        await this.page.getByRole('button', { name: 'Update' }).click();
-        await this.page.waitForTimeout(1000);
-        return true;
-      } catch (err) {
-        console.error('Delivered process failed:');
-        return false;
+        try {
+            const login = loginLocators(this.page);
+            const l = deliveredLocators(this.page);
+
+            await login.usernameInput.click();
+            await login.usernameInput.fill(username);
+            await login.loginButton.click();
+            await login.passwordInput.click();
+            await login.passwordInput.fill(password);
+            await login.loginButton.click();
+
+            await l.logisticsManagementMenu.click();
+            await l.returnToFcLink.click();
+            await l.firstDeliveryRow.click();
+            await l.vehicleAllocatedStatus.click();
+            await l.deliveredOption.click();
+            await l.okButton.click();
+            await l.yesButton.click();
+            await l.deliveryDetailsButton.click();
+            await l.updateButton.click();
+            await l.invoiceReturnedRadio.check();
+            await l.collectionDetailsButton.click();
+            await l.updateButton.click();
+            await this.page.waitForTimeout(1000);
+            return true;
+        } catch (err) {
+            console.error('Delivered process failed:');
+            return false;
         }
-      }
+    }
 };
-
-
