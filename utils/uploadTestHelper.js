@@ -1,6 +1,6 @@
 const { Uploadfile } = require('../pages/Aupload.page');
 const config = require('../config/base.config');
-const { incrementBillNumbers } = require('./dataUtils');
+const { incrementBillNumbers, syncInvoiceNumbers, recalculateGrossAmount } = require('./dataUtils');
 const path = require('path');
 
 // Helper for simple uploads without bill increment
@@ -24,6 +24,16 @@ async function fcBrandUpload(page, baseURL, documentType, fc, brand, uploadMetho
     const uploadfile = new Uploadfile(page);
     await page.goto(baseURL);
     const result = await uploadfile[uploadMethod](config.credentials.username, config.credentials.password, documentType, fc, brand);
+    return result;
+}
+
+// Helper for APX-folder single file uploads with bill number increment
+async function singleFileUploadAPXWithIncrement(page, baseURL, documentType, fileKey, uploadMethod, columnHeader) {
+    const filePath = path.resolve(__dirname, `../test-data/APX/${fileKey}.csv`);
+    await incrementBillNumbers(filePath, columnHeader);
+    const uploadfile = new Uploadfile(page);
+    await page.goto(baseURL);
+    const result = await uploadfile[uploadMethod](config.credentials.username, config.credentials.password, documentType, fileKey);
     return result;
 }
 
@@ -75,11 +85,39 @@ async function threeFileUploadWithIncrement(page, baseURL, fc, brand, csvFileNam
     return result;
 }
 
+// Helper for BGRD:MRCO Sales Return upload with SalesReturnNo increment
+async function salesReturnBgrdMrcoWithIncrement(page, baseURL) {
+    const salesOrderPath = path.resolve(__dirname, '../test-data/bgrd-mrco/salesmarico.csv');
+    const filePath = path.resolve(
+        __dirname,
+        '../test-data/bgrd-mrco-reutrn/MARCO_BrandReturn.csv'
+    );
+
+    // Step 1: Recalculate Gross Amount based on tax percentages (CGST/SGST or IGST)
+    await recalculateGrossAmount(filePath);
+
+    // Step 2: Sync Reg InvoiceNumber (first 3 rows) with Bill Number from sales order
+    await syncInvoiceNumbers(salesOrderPath, filePath, 'Bill Number', 'Reg InvoiceNumber', 3);
+
+    // Step 3: Increment SalesReturnNo to avoid duplicate-file rejection
+    await incrementBillNumbers(filePath, 'SalesReturnNo');
+
+    const uploadfile = new Uploadfile(page);
+    await page.goto(config.baseURLpreprod);
+    const result = await uploadfile.UploadBgrdMrcoSalesReturn(
+        config.credentials.username,
+        config.credentials.password
+    );
+    return result;
+}
+
 module.exports = {
     simpleUpload,
     singleFileUpload,
     fcBrandUpload,
+    singleFileUploadAPXWithIncrement,
     singleFileUploadWithIncrement,
     twoFileUploadWithIncrement,
-    threeFileUploadWithIncrement
+    threeFileUploadWithIncrement,
+    salesReturnBgrdMrcoWithIncrement
 };

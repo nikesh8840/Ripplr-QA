@@ -238,6 +238,28 @@ exports.Uploadfile = class Uploadfile {
         );
     }
 
+    async UploadSinglefileforerhsNTNG(username, password, uploadtype, name) {
+        const filePath = path.resolve(__dirname, `../test-data/APX/${name}.csv`);
+        const l = uploadLocators(this.page);
+
+        await this._login(username, password);
+        await this._openUploadModal(l, uploadtype);
+        await l.fcInput.click();
+        await l.fcInput.fill('erhs');
+        await l.textOption('ERHS: E Ripplr HosaRoad').click();
+        await l.brandCombobox.click();
+        await l.brandCombobox.fill('nothing');
+        await l.textOption('NOTH: NOTHING').click();
+        await l.singleFileInput.setInputFiles(filePath);
+        await l.submitButton.click();
+        await this.page.waitForTimeout(2000);
+
+        return await this._searchAndVerify(
+            l, uploadtype, 'erhs', 'ERHS: E Ripplr HosaRoad', 'nothing', 'NOTH: NOTHING',
+            2, 20, 4000, 0
+        );
+    }
+
     async UploadSinglefileforermkSMSNG(username, password, uploadtype, name) {
         const filePath = path.resolve(__dirname, `../test-data/APX/${name}.csv`);
         const l = uploadLocators(this.page);
@@ -258,6 +280,46 @@ exports.Uploadfile = class Uploadfile {
         return await this._searchAndVerify(
             l, uploadtype, 'ermk', 'ERMK: E Ripplr Makali', 'SAMS', 'SAMS: SAMSUNG',
             2, 20, 4000, 0
+        );
+    }
+
+    async UploadBgrdMrcoSalesReturn(username, password) {
+        const filePath = path.resolve(
+            __dirname,
+            '../test-data/bgrd-mrco-reutrn/MARCO_BrandReturn.csv'
+        );
+        const uploadtype = 'Sales Return';
+        const FC = 'bgrd';
+        const FcName = 'BGRD: Begur Road';
+        const Brand = 'mrco';
+        const BrandName = 'MRCO: Marico';
+        const l = uploadLocators(this.page);
+
+        await this._login(username, password);
+        await this._openUploadModal(l, uploadtype);
+
+        // Use stable modal-scoped locator — avoids fragile CSS-in-JS class (.cuNTTY)
+        const modalFcInput = this.page.locator('.ant-modal-body .ant-form-item-control input').first();
+        await modalFcInput.click();
+        await modalFcInput.fill(FC);
+        await l.textOption(FcName).click();
+        await l.brandCombobox.click();
+        await l.brandCombobox.fill(Brand);
+        await l.textOption(BrandName).click();
+
+        // Sales Return modal uses a single Upload button (not ant-space multi-input)
+        const [fileChooser] = await Promise.all([
+            this.page.waitForEvent('filechooser'),
+            this.page.getByRole('button', { name: /Upload a File/i }).first().click(),
+        ]);
+        await fileChooser.setFiles(filePath);
+
+        await l.submitButton.click();
+        await this.page.waitForTimeout(2000);
+
+        return await this._searchAndVerify(
+            l, uploadtype, FC, FcName, Brand, BrandName,
+            1.5, 14, 0, 0
         );
     }
 

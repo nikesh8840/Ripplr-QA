@@ -3,7 +3,7 @@ const path = require('path');
 
 const getFCName = (fcCode) => {
     const fcMap = {
-        'erhs': 'ERHS: ERHS',
+        'erhs': 'ERHS: E Ripplr HosaRoad',
         'btml': 'BTML: BTM',
         'yspr': 'YSPR: Yeshwantpura',
         'peenya': 'PNYA: Peenya',
@@ -37,7 +37,7 @@ const getBrandName = (brandCode) => {
         'mrco': 'MRCO: Marico',
         'gdjgt': 'GDJGT: Godrej GT',
         'gdj': 'GDJ: Godrej',
-        
+        'nothing': 'NOTH: NOTHING',
     };
     return brandMap[brandCode] || brandCode;
 };

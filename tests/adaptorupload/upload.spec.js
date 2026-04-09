@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
 const config = require('../../config/base.config');
-const { simpleUpload, singleFileUpload, fcBrandUpload, singleFileUploadWithIncrement, twoFileUploadWithIncrement, threeFileUploadWithIncrement } = require('../../utils/uploadTestHelper');
+const { simpleUpload, singleFileUpload, fcBrandUpload, singleFileUploadAPXWithIncrement, singleFileUploadWithIncrement, twoFileUploadWithIncrement, threeFileUploadWithIncrement } = require('../../utils/uploadTestHelper');
 
 // Simple Upload Tests
 // test('Upload GRN file', async ({ page }) => {
@@ -15,6 +15,12 @@ const { simpleUpload, singleFileUpload, fcBrandUpload, singleFileUploadWithIncre
 
 // test('Upload salesOrder file - Google', async ({ page }) => {
 //     const result = await singleFileUpload(page, config.baseURL43, 'Sales Order', 'salesordergoogle');
+//     expect(result).toBeTruthy();
+// });
+
+// test('Upload salesOrder file - Nothing', async ({ page }) => {
+//     test.setTimeout(180000);
+//     const result = await singleFileUploadAPXWithIncrement(page, config.baseURLpreprod, 'Sales Order', 'nothing', 'UploadSinglefileforerhsNTNG', 'Doc. No.');
 //     expect(result).toBeTruthy();
 // });
 
@@ -68,18 +74,18 @@ const { simpleUpload, singleFileUpload, fcBrandUpload, singleFileUploadWithIncre
 // });
 
 // Two-File Uploads with Bill Increment
-// test('Upload BGRD:MARICO sales order file', async ({ page }) => {
-//     const result = await singleFileUploadWithIncrement(page, config.baseURLpreprod, 'bgrd', 'mrco');
-//     expect(result).toBeTruthy();
-// });
-
-test('Upload BYTI:GDJGT sales order file', async ({ page }) => {
-    const result = await twoFileUploadWithIncrement(page, config.baseURLpreprod, 'byti', 'gdj',
-        ['u.csv', 'c.csv'],
-        ['Bill No', 'CN_Adjusted_Bill_No']
-    );
+test('Upload BGRD:MARICO sales order file', async ({ page }) => {
+    const result = await singleFileUploadWithIncrement(page, config.baseURLpreprod, 'bgrd', 'mrco');
     expect(result).toBeTruthy();
 });
+
+// test('Upload BYTI:GDJGT sales order file', async ({ page }) => {
+//     const result = await twoFileUploadWithIncrement(page, config.baseURLpreprod, 'byti', 'gdj',
+//         ['u.csv', 'c.csv'],
+//         ['Bill No', 'CN_Adjusted_Bill_No']
+//     );
+//     expect(result).toBeTruthy();
+// });
 
 // test('Upload BTML:NIVEA sales order file', async ({ page }) => {
 //     const result = await twoFileUploadWithIncrement(page, config.baseURLpreprod, 'btml', 'nivea');
