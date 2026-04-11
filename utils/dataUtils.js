@@ -29,6 +29,10 @@ async function incrementBillNumbers(csvFilePath, columnHeaderName = 'Bill Number
             if (lines[i].trim() === '') continue; // Skip empty lines
             
             const columns = lines[i].split(',');
+            if (columns[columnIndex] === undefined) {
+                updatedLines.push(lines[i]);
+                continue;
+            }
             const value = columns[columnIndex].trim();
             
             // Find the position of the first digit
@@ -265,4 +269,45 @@ async function recalculateGrossAmount(csvFilePath, cols = {}) {
     }
 }
 
-module.exports = { readJsonData, incrementBillNumbers, syncInvoiceNumbers, recalculateGrossAmount };
+/**
+ * Appends a random dummy column to a CSV file to prevent server-side duplicate-file rejection.
+ * If the last column header already starts with '_dup_', it updates it to a new random value.
+ * Data rows get an empty value for the dummy column.
+ *
+ * @param {string} csvFilePath
+ */
+function randomizeLastColumn(csvFilePath) {
+    try {
+        const content = fs.readFileSync(csvFilePath, 'utf-8');
+        const lines = content.split('\n');
+        const nonEmpty = lines.filter(l => l.trim() !== '');
+        if (nonEmpty.length < 1) return;
+
+        const randTag = `_dup_${Math.random().toString(36).substring(2, 8)}`;
+        const headers = nonEmpty[0].split(',');
+        const lastHeader = headers[headers.length - 1].trim();
+
+        let updatedLines;
+        if (lastHeader.startsWith('_dup_')) {
+            // Already present — update header to new random tag, keep data rows untouched
+            headers[headers.length - 1] = randTag;
+            updatedLines = [headers.join(',')];
+            for (let i = 1; i < nonEmpty.length; i++) {
+                updatedLines.push(nonEmpty[i]);
+            }
+        } else {
+            // Not present — append new column header and empty value to each row
+            updatedLines = [nonEmpty[0] + ',' + randTag];
+            for (let i = 1; i < nonEmpty.length; i++) {
+                updatedLines.push(nonEmpty[i] + ',');
+            }
+        }
+
+        fs.writeFileSync(csvFilePath, updatedLines.join('\n'), 'utf-8');
+        console.log(`[randomizeLastColumn] Column randomized: ${randTag}`);
+    } catch (error) {
+        console.error('Error randomizing last column:', error);
+    }
+}
+
+module.exports = { readJsonData, incrementBillNumbers, syncInvoiceNumbers, recalculateGrossAmount, randomizeLastColumn };

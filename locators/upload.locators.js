@@ -1,13 +1,13 @@
 const uploadLocators = (page) => ({
     // --- Navigation ---
-    adapterUploadsLink:         page.getByRole('link', { name: 'Adapter Uploads' }),
+    adapterUploadsLink:         page.getByRole('link', { name: 'Adapter Uploads' }).first(),
 
     // --- Open upload modal ---
     uploadButton:               page.getByRole('button', { name: 'Upload' }),
     uploadCsvLabel:             page.getByLabel('Upload Csv').locator('label span').nth(1),
 
     // --- Upload form: document type ---
-    docTypeTitle: (type)     => page.getByTitle(type).locator('div'),
+    docTypeTitle: (type)     => page.getByTitle(type).locator('div').first(),
 
     // --- Upload form: FC/Brand — dynamic methods (UploadSalesOrder / UploadSalesOrdertwo / UploadSinglefileFcBrand) ---
     fcInput:                    page.locator('.cuNTTY:first-child .ant-form-item-control input'),
@@ -37,9 +37,9 @@ const uploadLocators = (page) => ({
     brandFilterCombobox:        page.getByRole('combobox', { name: 'Brand(s) Select Brand(s)' }),
 
     // --- Results table ---
-    uploadedTimeCell:           page.locator('tr:first-child td:nth-child(6) div:nth-child(2) span'),
-    syncIcon:                   page.locator('tr:first-child .anticon-sync'),
-    eyeIcon:                    page.locator("tr:first-child img[src*='eye-icon']"),
+    uploadedTimeCell:           page.locator('.ant-table-tbody tr').first().locator('td:nth-child(6) div:nth-child(2) span'),
+    syncIcon:                   page.locator('.ant-table-tbody tr').first().locator('.anticon-sync'),
+    eyeIcon:                    page.locator(".ant-table-tbody tr").first().locator("img[src*='eye-icon']"),
 
     // --- Processing modal ---
     progressCount:              page.locator('.ant-tag-blue strong'),

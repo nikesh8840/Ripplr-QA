@@ -13,6 +13,36 @@ module.exports = {
     password: 'M@ver!ck'  // Replace with valid test password
   },
 
+  productMaster: {
+    uploadType: 'Product Master',
+    distributorCode: '15842',
+    distributorName: 'INTELLIGENT RETAIL PRIVATE LIMITED',
+    godown: 'Main Godown',
+    // Brand-specific info keyed by brand code (lowercase)
+    brands: {
+      mrco: { code: 'BRD0050', name: 'MRCO' },
+    },
+    // Column names in the sales order CSV to pull product info from
+    salesOrderCols: {
+      productCode: 'Product Code',
+      productName: 'Product Name',
+      batch:       'Batch Code',
+      mrp:         'New MRP',
+    },
+    // Exact header row of the product master CSV (must match mrco.csv)
+    outputHeaders: [
+      'Distributor Code', 'Distributor Name', 'Distributor Branch Code',
+      'Distributor Branch Name', 'Brand Code ', 'Brannd Name', 'Godown',
+      'Product Code', 'Product Description', 'Batch', 'Batch Expiry Date',
+      'MRP', 'ManfDt', 'UPC', 'Freshness', 'Selling Rate',
+      'Saleable Stock CS', 'Saleable Stock PC', 'Saleable Stock',
+      'Unsaleable Stock CS', 'Unsaleable Stock PC', 'Unsaleable Stock',
+      'Offer Stock CS', 'Offer Stock PC', 'Offer Stock',
+      'Total Stock CS', 'Total Stock PC', 'Total Stock',
+      'Saleable Stock Value', 'Unsaleable Stock Value', 'Tot Stock Value', 'dhbfh',
+    ],
+  },
+
   db: {
     ssh: {
       host: '43.205.73.33',

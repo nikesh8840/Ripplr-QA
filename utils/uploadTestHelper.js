@@ -1,6 +1,8 @@
 const { Uploadfile } = require('../pages/Aupload.page');
 const config = require('../config/base.config');
-const { incrementBillNumbers, syncInvoiceNumbers, recalculateGrossAmount } = require('./dataUtils');
+const pmBrandConfig = require('../config/ProductMaster');
+const { incrementBillNumbers, syncInvoiceNumbers, recalculateGrossAmount, randomizeLastColumn } = require('./dataUtils');
+const { extractProductsFromSalesOrderCSV, filterFailedProducts, buildProductMasterCSV } = require('./productMasterUtils');
 const path = require('path');
 
 // Helper for simple uploads without bill increment
@@ -37,19 +39,63 @@ async function singleFileUploadAPXWithIncrement(page, baseURL, documentType, fil
     return result;
 }
 
-// Helper for single file uploads with bill number increment
-async function singleFileUploadWithIncrement(page, baseURL, fc, brand, csvFileName = 'salesmarico.csv', columnHeader = 'Bill Number') {
+// Helper for single file uploads with bill number increment.
+// Pass withProductMaster = true to enable auto product master fallback.
+// Config is resolved automatically from config/ProductMaster.js using the brand key.
+async function singleFileUploadWithIncrement(page, baseURL, fc, brand, csvFileName = 'salesmarico.csv', columnHeader = 'Bill Number', withProductMaster = false) {
     const dataPath = path.resolve(__dirname, `../test-data/${fc}-${brand}`);
     const filePath = path.join(dataPath, csvFileName);
-    
-    // Increment bill numbers for the file
-    await incrementBillNumbers(filePath, columnHeader);
-    
-    // Perform upload
     const uploadfile = new Uploadfile(page);
+
+    // Increment bill numbers & randomize dummy column to prevent duplicate-file rejection
+    await incrementBillNumbers(filePath, columnHeader);
     await page.goto(baseURL);
-    const result = await uploadfile.UploadSinglefileFcBrand(config.credentials.username, config.credentials.password, 'Sales Order', fc, brand);
-    return result;
+    const result = await uploadfile.UploadSinglefileFcBrand(
+        config.credentials.username, config.credentials.password, 'Sales Order', fc, brand
+    );
+
+    if (!withProductMaster) return result;
+
+    // Scan eye view for product not found errors
+    const failedCodes = await uploadfile.scanForProductNotFoundErrors();
+    if (failedCodes.size === 0) return result;
+
+    console.log(`\n[Product Master] ${failedCodes.size} missing product(s) — auto-fixing...`);
+
+    // Resolve config automatically from brand key
+    const brandPmCfg = pmBrandConfig[brand];
+    if (!brandPmCfg) {
+        console.warn(`[Product Master] No config found for brand "${brand}" in config/ProductMaster.js`);
+        return result;
+    }
+
+    // Extract products from sales order CSV, filter to only failed ones
+    const allProducts     = extractProductsFromSalesOrderCSV(filePath, config.productMaster.salesOrderCols);
+    const missingProducts = filterFailedProducts(allProducts, failedCodes);
+
+    if (missingProducts.length === 0) {
+        console.warn('[Product Master] No matching products found in CSV for failed codes');
+        return result;
+    }
+
+    console.log(`[Product Master] Products to add: ${missingProducts.map(p => p.code).join(', ')}`);
+
+    // Build product master CSV (only mapped columns updated, rest from template row)
+    const pmPath = buildProductMasterCSV(missingProducts, brandPmCfg);
+
+    // Reset page state before product master upload (eye icon may have navigated away)
+    await page.goto(baseURL);
+    await uploadfile.uploadProductMasterFcBrand(
+        config.credentials.username, config.credentials.password, fc, brand, pmPath
+    );
+    console.log('[Product Master] Uploaded and processed');
+
+    // Re-increment bill numbers & re-upload sales order
+    randomizeLastColumn(filePath);
+    await page.goto(baseURL);
+    return await uploadfile.UploadSinglefileFcBrand(
+        config.credentials.username, config.credentials.password, 'Sales Order', fc, brand
+    );
 }
 
 // Helper for 2-file uploads with bill number increment (e.g., sales order + adjustment)

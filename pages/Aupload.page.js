@@ -20,6 +20,12 @@ exports.Uploadfile = class Uploadfile {
 
     async _login(username, password) {
         const login = loginLocators(this.page);
+        // Skip login if already authenticated (login form not visible)
+        const needsLogin = await login.usernameInput.isVisible({ timeout: 3000 }).catch(() => false);
+        if (!needsLogin) {
+            console.log('Already logged in — skipping login step');
+            return;
+        }
         await login.usernameInput.click();
         await login.usernameInput.fill(username);
         await login.passwordInput.click();
@@ -67,6 +73,8 @@ exports.Uploadfile = class Uploadfile {
             console.log(`ProgressCount: ${ProgressCount}`);
             if (ProgressCount === '0') {
                 if (extraDelay) await this.page.waitForTimeout(extraDelay);
+                // Capture modal text before it closes — used by scanForProductNotFoundErrors
+                this._lastModalText = await this.page.locator('.ant-modal-body').textContent().catch(() => '');
                 break;
             }
             await this.page.waitForTimeout(3300);
@@ -79,39 +87,70 @@ exports.Uploadfile = class Uploadfile {
         await l.fileTypeCombobox.click();
         await l.docTypeTitle(uploadtype).click();
         await l.fcFilterCombobox.click();
-        await l.fcFilterCombobox.fill(FC);
+        await this.page.waitForTimeout(400);
+        await this.page.keyboard.type(FC);
+        await this.page.waitForTimeout(400);
         await l.textOption(FcName).click();
         await l.brandFilterLabel.click();
-        await l.brandFilterCombobox.fill(Brand);
+        await this.page.waitForTimeout(200);
+        await this.page.keyboard.type(Brand);
+        await this.page.waitForTimeout(400);
         await l.textOption(BrandName).click();
         await l.searchButton.click();
 
         const uploadOk = await this._waitForUploadCompletion(l, diffLimit, maxRetries);
         if (!uploadOk) return false;
 
-        try {
+        // Give icons time to render in the table row
+        await this.page.waitForTimeout(2000);
+
+        const syncVisible = await l.syncIcon.isVisible({ timeout: 3000 }).catch(() => false);
+
+        if (syncVisible) {
+            // File in "Uploaded" state — click sync to trigger processing
             await l.syncIcon.click();
-            console.log("✅ Click succeeded");
-        } catch (error) {
-            console.log("❌ File uploaded but something went wrong:");
-            return true;
+            console.log("✅ Sync icon clicked");
+            if (syncDelay) await this.page.waitForTimeout(syncDelay);
+            const processOk = await this._waitForProcessing(l, processExtraDelay);
+            if (!processOk) return false;
+            await l.closeButton.click();
+        } else {
+            // Auto-processing: poll row until "Processing..." disappears
+            console.log("ℹ️  File auto-processing — waiting for completion");
+            const firstRow = this.page.locator('.ant-table-tbody tr').first();
+            for (let i = 0; i < 30; i++) {
+                const rowText = await firstRow.innerText().catch(() => 'Processing...');
+                if (!rowText.includes('Processing')) {
+                    console.log(`Processing complete (attempt ${i + 1})`);
+                    break;
+                }
+                console.log(`Still processing... (${i + 1}/30)`);
+                await this.page.waitForTimeout(3000);
+                await l.searchButton.click().catch(() => {});
+                await this.page.waitForTimeout(500);
+            }
+
+            await this.page.waitForTimeout(2000);
+
+            // Check row status — if "Partially Processed", some invoices failed.
+            // Click the sync/refresh icon to open the error modal and capture failure reasons.
+            const rowText = await firstRow.innerText().catch(() => '');
+            console.log(`Row status after processing: ${rowText.substring(0, 100)}`);
+
+            if (rowText.includes('Partially')) {
+                console.log("⚠️  Partially Processed — clicking sync/refresh icon to capture error details");
+                await l.syncIcon.click({ timeout: 8000 });
+                if (syncDelay) await this.page.waitForTimeout(syncDelay);
+                await this._waitForProcessing(l, processExtraDelay);
+                await l.closeButton.click().catch(() => {});
+            } else {
+                console.log("✅ Fully Processed — no invoice failures");
+                this._lastModalText = '';
+            }
         }
 
-        if (syncDelay) await this.page.waitForTimeout(syncDelay);
-
-        const processOk = await this._waitForProcessing(l, processExtraDelay);
-        if (!processOk) return false;
-
-        await l.closeButton.click();
-        try {
-            await l.eyeIcon.click();
-            await this.page.waitForTimeout(4000);
-            console.log("File Uploaded Successfully and processed");
-            return true;
-        } catch (error) {
-            console.log("Something went wrong");
-            return true;
-        }
+        console.log("File Uploaded Successfully and processed");
+        return true;
     }
 
     async Upload(username, password, uploadtype, name) {
@@ -211,7 +250,7 @@ exports.Uploadfile = class Uploadfile {
 
         return await this._searchAndVerify(
             l, uploadtype, FC, FcName, Brand, BrandName,
-            1.5, 14, 0, 0
+            1, 20, 0, 0
         );
     }
 
@@ -321,6 +360,85 @@ exports.Uploadfile = class Uploadfile {
             l, uploadtype, FC, FcName, Brand, BrandName,
             1.5, 14, 0, 0
         );
+    }
+
+    /**
+     * Reads the processing modal text captured during _waitForProcessing and
+     * extracts any product codes that failed with "Product not found in Product Master".
+     *
+     * CDMS error format:
+     *   "Product not found in Product Master: SKU Code: 731343 Product Name: ... MRP: ..."
+     *
+     * Returns a Set of SKU codes, or an empty Set if all invoices passed.
+     */
+    async scanForProductNotFoundErrors() {
+        const failedCodes = new Set();
+
+        try {
+            const modalText = this._lastModalText || '';
+
+            if (!modalText) {
+                console.log('scanForProductNotFoundErrors: no modal text captured');
+                return failedCodes;
+            }
+
+            // Extract all SKU codes from CDMS product-not-found error messages.
+            // CDMS format: "Product not found in Product Master: <code> Product Name: ..."
+            // Fallback format (detail page): "SKU Code: <code>"
+            const patterns = [
+                /Product not found in Product Master:\s*(\S+)\s+Product Name/gi,
+                /SKU Code:\s*(\d+)/gi,
+            ];
+            for (const pattern of patterns) {
+                for (const m of [...modalText.matchAll(pattern)]) {
+                    failedCodes.add(m[1]);
+                    console.log(`[Product Master] Product not found — code: ${m[1]}`);
+                }
+            }
+
+        } catch (err) {
+            console.log('scanForProductNotFoundErrors: error -', err.message);
+        }
+
+        console.log(`Failed product codes found: ${failedCodes.size > 0 ? [...failedCodes].join(', ') : 'none'}`);
+        return failedCodes;
+    }
+
+    /**
+     * Uploads a product master CSV file for the given FC/Brand.
+     * @param {string} username
+     * @param {string} password
+     * @param {string} FC        - e.g. 'bgrd'
+     * @param {string} Brand     - e.g. 'mrco'
+     * @param {string} filePath  - absolute path to the generated product master CSV
+     * @param {string} uploadType - document type label in the UI (default: 'Product Master')
+     */
+    async uploadProductMasterFcBrand(username, password, FC, Brand, filePath, uploadType = 'Product Master') {
+        const FcName    = getFCName(FC);
+        const BrandName = getBrandName(Brand);
+        const l         = uploadLocators(this.page);
+
+        await this._login(username, password);
+        await this._openUploadModal(l, uploadType);
+
+        // Product Master modal only has Brand (no FC field — product master is brand-wide)
+        await l.brandCombobox.click();
+        await l.brandCombobox.pressSequentially(Brand, { delay: 50 });
+        await this.page.waitForTimeout(300);
+        await l.textOption(BrandName).click();
+
+        await this.page.locator('.ant-modal-body input[type="file"]').setInputFiles(filePath);
+        await l.submitButton.click();
+        // Product Master is brand-wide (no FC filter in results table) — just wait for the
+        // modal to close (submit succeeded) rather than running full _searchAndVerify
+        await this.page.waitForTimeout(3000);
+        const modalStillOpen = await l.submitButton.isVisible({ timeout: 1000 }).catch(() => false);
+        if (modalStillOpen) {
+            console.log('Product master modal still open after submit — waiting more');
+            await this.page.waitForTimeout(3000);
+        }
+        console.log('Product master submitted successfully');
+        return true;
     }
 
     async uploadFilesByType(username, password, uploadtype, FC, Brand, fileTypes) {

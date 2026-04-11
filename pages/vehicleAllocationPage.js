@@ -249,7 +249,14 @@ exports.VehicleAllocationPage = class VehicleAllocationPage {
             await l.driverNumberInput.click();
             await l.driverNumberInput.fill('8840576893');
 
-            await selectFirstDropdownResult(this.page, 'Delivery Boy', 'del');
+            await this.page.locator('label:has-text("Delivery Boy")').locator('..').locator('..').locator('.ant-select-selector').click();
+            await this.page.locator('label:has-text("Delivery Boy")').locator('..').locator('..').locator('input').pressSequentially('delivery boy', { delay: 50 });
+            await this.page.locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden) .ant-select-item-option-content')
+                .filter({ hasText: /^delivery boy$/i })
+                .waitFor({ state: 'visible', timeout: 5000 });
+            await this.page.locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden) .ant-select-item-option-content')
+                .filter({ hasText: /^delivery boy$/i })
+                .click();
             await fillCrateCountsIfPresent(this.page);
             await screenshot(this.page, '05-form-filled');
 

@@ -1,0 +1,33 @@
+Task,Manual Test Time,With Claude & Automation,Time Saved
+Adapter Upload Sales Order - Multi FC-Brand (APX ERHS ERMK Samsung etc.),45 min,3 min,42 min
+BGRD:MARICO Sales Return Upload + DB Gross Amount Verification,60 min,4 min,56 min
+Vehicle Allocation - VL (Vehicle Loading),30 min,2 min,28 min
+Vehicle Allocation - DL (Delivery Loading),30 min,2 min,28 min
+Vehicle Allocation - RF Close,20 min,2 min,18 min
+Vehicle Allocation - DL + RF Close Combined,40 min,3 min,37 min
+Vehicle Allocation - RID,20 min,2 min,18 min
+Nothing Brand Vehicle Allocation,30 min,2 min,28 min
+Segregator - Segregation Flow,25 min,2 min,23 min
+Segregator - Reject Flow,20 min,2 min,18 min
+Segregator - Verify Flow,20 min,2 min,18 min
+Sales Order Creation,30 min,2 min,28 min
+Sales Order Journey (End-to-End),60 min,4 min,56 min
+Sales Return - Order Management,30 min,2 min,28 min
+Sales Return - Return Flow,30 min,2 min,28 min
+Delivery Allocation - Logistics,30 min,2 min,28 min
+Return to FC - Logistics,25 min,2 min,23 min
+GRN (Goods Receipt Note),25 min,2 min,23 min
+Onboarding - Create Transport Manager,20 min,1 min,19 min
+Onboarding - Create User,20 min,1 min,19 min
+Salesman - Auto Submit,20 min,1 min,19 min
+Salesman - V Collection,20 min,1 min,19 min
+Nothing Brand E2E Flow,60 min,4 min,56 min
+Combined Flow (Multi-module),90 min,5 min,85 min
+Smoke Test - Full Navigation,30 min,2 min,28 min
+Smoke Test - Core Modules,20 min,1 min,19 min
+Login / Auth Validation,10 min,1 min,9 min
+Dashboard Verification,15 min,1 min,14 min
+DB Verification via SSH Tunnel (automated),30 min,Automated,30 min
+Bill Number Auto-Increment (CSV pre-processing),15 min,Automated,15 min
+Screenshot Capture on Pass/Fail,10 min,Automated,10 min
+TOTAL,~905 min (~15 hrs),~60 min (~1 hr),~845 min (~14 hrs)

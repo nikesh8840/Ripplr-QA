@@ -75,7 +75,11 @@ const { simpleUpload, singleFileUpload, fcBrandUpload, singleFileUploadAPXWithIn
 
 // Two-File Uploads with Bill Increment
 test('Upload BGRD:MARICO sales order file', async ({ page }) => {
-    const result = await singleFileUploadWithIncrement(page, config.baseURLpreprod, 'bgrd', 'mrco');
+    test.setTimeout(300_000);
+    const result = await singleFileUploadWithIncrement(
+        page, config.baseURLpreprod, 'bgrd', 'mrco',
+        'salesmarico.csv', 'Bill Number', true
+    );
     expect(result).toBeTruthy();
 });
 
