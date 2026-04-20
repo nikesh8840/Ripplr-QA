@@ -27,18 +27,33 @@ async function markRowAsDelivered(page, rowNumber) {
         await page.getByRole("button", { name: "Collection Details" }).click();
         await page.getByRole("button", { name: "Update" }).click();
         await page.getByRole('link', { name: 'Invoice List' }).click();
-        await page.waitForTimeout(700);
-        await page.locator(`tr:nth-child(${rowNumber + 1}) td .fAmufx`).nth(3).click();
-        const addImageBtn = page.locator('.ant-modal-content button .iVToiv');
-        if (await addImageBtn.count() > 0) {
-            console.log('Add More Image button found, uploading file');
-            await addImageBtn.click();
-            await page.setInputFiles('input[type="file"]', FILE_PATH);
-            await page.locator('.ant-modal-body button:has-text("Upload")').click();
-            await page.getByRole('dialog').filter({ hasText: 'Proof of DeliveryVerify Proof' }).getByLabel('Close', { exact: true }).click();
-            await page.locator(`tr:nth-child(${rowNumber + 1}) td .fAmufx`).nth(4).click();
-        } else {
-            console.log('Add More Image button not found');
+        await page.waitForTimeout(1000);
+        // Click epod icon for this row (may or may not open popup depending on verify flag)
+        const epodIcon = page.locator(`tr:nth-child(${rowNumber + 1}) td .fAmufx`).nth(3);
+        if (await epodIcon.count() > 0) {
+            await epodIcon.click();
+            await page.waitForTimeout(500);
+            const addImageBtn = page.locator('.ant-modal-content button .iVToiv');
+            if (await addImageBtn.count() > 0) {
+                console.log('Add More Image button found, uploading file');
+                await addImageBtn.click();
+                await page.setInputFiles('input[type="file"]', FILE_PATH);
+                await page.locator('.ant-modal-body button:has-text("Upload")').click();
+                await page.waitForTimeout(2000);
+                const closeBtn = page.locator('.ant-modal-wrap:not([style*="display: none"]) .ant-modal-close').first();
+                if (await closeBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+                    await closeBtn.click();
+                }
+                await page.waitForTimeout(500);
+            } else {
+                console.log('Epod popup not opened (verify flag may be disabled) — skipping');
+            }
+        }
+        // Click verify/tick icon if it exists
+        const verifyIcon = page.locator(`tr:nth-child(${rowNumber + 1}) td .fAmufx`).nth(4);
+        if (await verifyIcon.count() > 0) {
+            await verifyIcon.click();
+            await page.waitForTimeout(500);
         }
         console.log(`Row ${rowNumber} marked as Delivered`);
         return true;
@@ -71,27 +86,40 @@ async function markRowAsPartialDelivered(page, rowNumber) {
         await page.getByText('Product Not Required').click();
         await page.getByRole("button", { name: "Delivery Details" }).click();
         await page.getByRole("button", { name: "Update" }).click();
-        await page.getByRole("radio", { name: "Invoice settled" }).check();
-        let collectableamount = await page.locator(`.ant-col-xs-6:nth-child(12) .sc-kOZHUs`).innerText();
+        await page.getByRole("radio", { name: "Invoice Returned" }).check();
+        let collectableamount = await page.locator(`div[class='sc-bczRLJ sc-gsnTZi jkiZmR jnFvAE'] div:nth-child(2) div:nth-child(2) span:nth-child(1)`).innerText();
         collectableamount = collectableamount.replace('₹', '').replace(',', '');
         console.log('collectableamount', collectableamount);
         await page.locator("input[name='cash']").click();
-        await page.locator("input[name='cash']").fill(String(Math.ceil(collectableamount)));
+        await page.locator("input[name='cash']").fill(String(Math.ceil(collectableamount / 4)));
         await page.getByRole("button", { name: "Collection Details" }).click();
         await page.getByRole("button", { name: "Update" }).click();
         await page.getByRole('link', { name: 'Invoice List' }).click();
-        await page.waitForTimeout(700);
-        await page.locator(`tr:nth-child(${rowNumber + 1}) td .fAmufx`).nth(3).click();
-        const addImageBtn = page.locator('.ant-modal-content button .iVToiv');
-        if (await addImageBtn.count() > 0) {
-            console.log('Add More Image button found, uploading file');
-            await addImageBtn.click();
-            await page.setInputFiles('input[type="file"]', FILE_PATH);
-            await page.locator('.ant-modal-body button:has-text("Upload")').click();
-            await page.getByRole('dialog').filter({ hasText: 'Proof of DeliveryVerify Proof' }).getByLabel('Close', { exact: true }).click();
-            await page.locator(`tr:nth-child(${rowNumber + 1}) td .fAmufx`).nth(4).click();
-        } else {
-            console.log('Add More Image button not found');
+        await page.waitForTimeout(1000);
+        const pdEpodIcon = page.locator(`tr:nth-child(${rowNumber + 1}) td .fAmufx`).nth(3);
+        if (await pdEpodIcon.count() > 0) {
+            await pdEpodIcon.click();
+            await page.waitForTimeout(500);
+            const addImageBtn = page.locator('.ant-modal-content button .iVToiv');
+            if (await addImageBtn.count() > 0) {
+                console.log('Add More Image button found, uploading file');
+                await addImageBtn.click();
+                await page.setInputFiles('input[type="file"]', FILE_PATH);
+                await page.locator('.ant-modal-body button:has-text("Upload")').click();
+                await page.waitForTimeout(2000);
+                const closeBtn = page.locator('.ant-modal-wrap:not([style*="display: none"]) .ant-modal-close').first();
+                if (await closeBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+                    await closeBtn.click();
+                }
+                await page.waitForTimeout(500);
+            } else {
+                console.log('Epod popup not opened (verify flag may be disabled) — skipping');
+            }
+        }
+        const pdVerifyIcon = page.locator(`tr:nth-child(${rowNumber + 1}) td .fAmufx`).nth(4);
+        if (await pdVerifyIcon.count() > 0) {
+            await pdVerifyIcon.click();
+            await page.waitForTimeout(500);
         }
         console.log(`Row ${rowNumber} marked as Partial Delivered`);
         return true;

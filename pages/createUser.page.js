@@ -69,13 +69,21 @@ exports.CreateUserPage = class CreateUserPage {
         await l.passwordInput.click();
         await l.passwordInput.fill(userData.password);
 
-        // FC:Brands (optional but may be required for certain user types)
+        // FC:Brands — required for most user types
         if (userData.fcBrand) {
+            // 1. Open the dropdown
             await l.fcBrandsDropdown.click();
-            await l.fcBrandsDropdown.pressSequentially(userData.fcBrand, { delay: 50 });
-            await this.page.locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)').waitFor({ state: 'visible', timeout: 5000 });
+            // 2. Wait for the dropdown overlay to actually appear before typing
+            await this.page.locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)').waitFor({ state: 'visible', timeout: 8000 });
+            // 3. Type into the focused input (keyboard.type goes to the active element)
+            await this.page.keyboard.type(userData.fcBrand, { delay: 60 });
+            // 4. Wait for a matching option to render after filtering
+            await this.page.locator('.ant-select-item-option-content', { hasText: userData.fcBrand })
+                .first()
+                .waitFor({ state: 'visible', timeout: 8000 });
+            // 5. Click the first matching option
             await this.page.locator('.ant-select-item-option-content', { hasText: userData.fcBrand }).first().click();
-            // FC:Brands is multi-select — dropdown stays open after selection; press Escape to close
+            // 6. FC:Brands is multi-select — dropdown stays open; press Escape to close
             await this.page.keyboard.press('Escape');
             await this.page.locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)').waitFor({ state: 'hidden', timeout: 5000 });
             console.log(`Selected FC:Brand: ${userData.fcBrand}`);

@@ -310,4 +310,90 @@ function randomizeLastColumn(csvFilePath) {
     }
 }
 
-module.exports = { readJsonData, incrementBillNumbers, syncInvoiceNumbers, recalculateGrossAmount, randomizeLastColumn };
+/**
+ * Scans all date columns (DD-MM-YYYY) in a CSV and shifts any date older than
+ * `maxAgeDays` to a random date within the last `maxAgeDays` days from today.
+ * Non-date columns and values that don't match DD-MM-YYYY are left untouched.
+ *
+ * @param {string} csvFilePath
+ * @param {number} [maxAgeDays=15]
+ */
+function refreshDatesWithin15Days(csvFilePath, maxAgeDays = 15) {
+    try {
+        const content = fs.readFileSync(csvFilePath, 'utf-8');
+        const lines = content.split('\n');
+        if (lines.length < 2) return;
+
+        const header = lines[0].split(',');
+        const ddmmyyyyRegex = /^\d{2}-\d{2}-\d{4}$/;
+
+        // Detect which columns contain DD-MM-YYYY dates by checking the first data row
+        const firstData = lines[1].split(',');
+        const dateColIndices = [];
+        for (let c = 0; c < firstData.length; c++) {
+            if (ddmmyyyyRegex.test(firstData[c].trim())) {
+                dateColIndices.push(c);
+            }
+        }
+
+        if (dateColIndices.length === 0) {
+            console.log(`[refreshDates] No DD-MM-YYYY date columns detected in ${csvFilePath}`);
+            return;
+        }
+
+        console.log(`[refreshDates] Date columns found: ${dateColIndices.map(i => header[i]?.trim()).join(', ')}`);
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const cutoff = new Date(today);
+        cutoff.setDate(cutoff.getDate() - maxAgeDays);
+
+        const pad = (n) => String(n).padStart(2, '0');
+
+        const randomDateWithinRange = () => {
+            const daysAgo = Math.floor(Math.random() * maxAgeDays);
+            const d = new Date(today);
+            d.setDate(d.getDate() - daysAgo);
+            return `${pad(d.getDate())}-${pad(d.getMonth() + 1)}-${d.getFullYear()}`;
+        };
+
+        const parseDDMMYYYY = (str) => {
+            const [dd, mm, yyyy] = str.split('-').map(Number);
+            return new Date(yyyy, mm - 1, dd);
+        };
+
+        const updatedLines = [lines[0]];
+        let changed = false;
+
+        for (let i = 1; i < lines.length; i++) {
+            if (lines[i].trim() === '') continue;
+            const cols = lines[i].split(',');
+
+            for (const c of dateColIndices) {
+                const val = (cols[c] || '').trim();
+                if (!ddmmyyyyRegex.test(val)) continue;
+
+                const date = parseDDMMYYYY(val);
+                if (date < cutoff) {
+                    const newDate = randomDateWithinRange();
+                    console.log(`[refreshDates] Row ${i} "${header[c]?.trim()}": ${val} → ${newDate}`);
+                    cols[c] = newDate;
+                    changed = true;
+                }
+            }
+
+            updatedLines.push(cols.join(','));
+        }
+
+        if (changed) {
+            fs.writeFileSync(csvFilePath, updatedLines.join('\n'), 'utf-8');
+            console.log(`[refreshDates] Dates refreshed in ${csvFilePath}`);
+        } else {
+            console.log(`[refreshDates] All dates already within ${maxAgeDays} days — no changes`);
+        }
+    } catch (error) {
+        console.error('Error refreshing dates:', error);
+    }
+}
+
+module.exports = { readJsonData, incrementBillNumbers, syncInvoiceNumbers, recalculateGrossAmount, randomizeLastColumn, refreshDatesWithin15Days };

@@ -1,7 +1,6 @@
 const { test, expect } = require('@playwright/test');
 const config = require('../../config/base.config');
 const { CreateUserPage } = require('../../pages/createUser.page');
-
 // ─── Test Data ────────────────────────────────────────────────────────────────
 // Timestamp suffix ensures unique email/empId on every run
 const ts = Date.now();

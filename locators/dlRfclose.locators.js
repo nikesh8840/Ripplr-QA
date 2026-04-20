@@ -4,6 +4,15 @@ const dlRfcloseLocators = (page) => ({
     returnToFcLink:                     page.getByRole('link', { name: 'Return To Fc' }),
     invoiceListLink:                    page.getByRole('link', { name: 'Invoice List' }),
 
+    // --- FC / Brand filters on Return to FC list ---
+    fcFilterCombobox:                   page.getByRole('combobox', { name: /FC\(s\)/i }),
+    brandFilterCombobox:                page.getByRole('combobox', { name: /Brand/i }),
+    searchButton:                       page.getByRole('button', { name: 'Search' }),
+    visibleDropdownOption: (text) =>
+        page.locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
+            .locator('.ant-select-item-option-content', { hasText: text })
+            .first(),
+
     // --- Delivery list ---
     firstDeliveryRow:                   page.locator('tr .ccyvke a').nth(0),
     allBodyRows:                        page.locator('tbody tr'),
@@ -16,6 +25,7 @@ const dlRfcloseLocators = (page) => ({
     deliveredStatusOption:              page.locator('.ant-select-dropdown .ant-select-item:has-text("Delivered"):not([disabled]):not([hidden]):not(.ant-select-item-option-disabled)').first(),
     partialDeliveredOption:             page.locator('.ant-select-dropdown .ant-select-item:has-text("Partial Delivered"):not([disabled]):not([hidden]):not(.ant-select-item-option-disabled)').first(),
     deliveryAttemptedOption:            page.locator('.ant-select-dropdown .ant-select-item:has-text("Delivery Attempted"):not([disabled]):not([hidden]):not(.ant-select-item-option-disabled)').first(),
+    cancelledOption:                    page.locator('.ant-select-dropdown .ant-select-item:has-text("Cancelled"):not([disabled]):not([hidden]):not(.ant-select-item-option-disabled)').first(),
 
     // --- Confirmation dialogs ---
     okButton:                           page.getByRole('button', { name: 'OK' }),
@@ -54,7 +64,7 @@ const dlRfcloseLocators = (page) => ({
 
     // --- Document upload (RFC close) ---
     uploadInvDocButton:                 page.locator('button:has-text("Upload Inv & Other Doc")'),
-    uploadConfirmButton:                page.locator('button.giRYTO .iVToiv'),
+    uploadConfirmButton:                page.locator('.ant-modal-content').getByRole('button', { name: 'Upload' }),
     verifyButton:                       page.getByRole('button', { name: 'Verify' }),
 });
 

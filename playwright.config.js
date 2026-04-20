@@ -3,6 +3,16 @@ import { defineConfig, devices } from '@playwright/test';
 import dotenv from 'dotenv';
 dotenv.config();
 
+// Parse custom KEY=VALUE args from the end of the command line
+// e.g. npx playwright test ... SEQ=DL,PD,DA,CA  or  ... COUNT=4
+for (const arg of process.argv) {
+  const match = arg.match(/^([A-Z_]+)=(.+)$/);
+  if (match && !process.env[match[1]]) {
+    process.env[match[1]] = match[2];
+  }
+}
+
+
 export default defineConfig({
   timeout: 100000,
   retries: 0,

@@ -15,14 +15,16 @@ function extractProductsFromSalesOrderCSV(csvPath, cols) {
     const codeIdx  = idx(cols.productCode);
     const nameIdx  = idx(cols.productName);
     const batchIdx = cols.batch ? idx(cols.batch) : -1;
-    const mrpIdx   = idx(cols.mrp);
+    const mrpIdx   = cols.mrp ? idx(cols.mrp) : -1;
 
-    if (codeIdx === -1 || nameIdx === -1 || mrpIdx === -1) {
-        console.warn('extractProductsFromSalesOrderCSV: one or more required columns not found in SO CSV');
+    if (codeIdx === -1 || nameIdx === -1) {
+        console.warn('extractProductsFromSalesOrderCSV: required columns not found in SO CSV');
         console.warn(`  productCode="${cols.productCode}" → idx ${codeIdx}`);
         console.warn(`  productName="${cols.productName}" → idx ${nameIdx}`);
-        console.warn(`  mrp="${cols.mrp}" → idx ${mrpIdx}`);
         return [];
+    }
+    if (mrpIdx === -1) {
+        console.warn(`extractProductsFromSalesOrderCSV: mrp column "${cols.mrp}" not found — MRP will default to "0"`);
     }
 
     const seen     = new Set();

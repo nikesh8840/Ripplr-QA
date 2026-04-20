@@ -138,11 +138,24 @@ exports.Uploadfile = class Uploadfile {
             console.log(`Row status after processing: ${rowText.substring(0, 100)}`);
 
             if (rowText.includes('Partially')) {
-                console.log("⚠️  Partially Processed — clicking sync/refresh icon to capture error details");
-                await l.syncIcon.click({ timeout: 8000 });
-                if (syncDelay) await this.page.waitForTimeout(syncDelay);
-                await this._waitForProcessing(l, processExtraDelay);
-                await l.closeButton.click().catch(() => {});
+                console.log("⚠️  Partially Processed — attempting to open error details");
+                try {
+                    // AntD table rows hide action icons until the row is hovered
+                    await firstRow.hover();
+                    await this.page.waitForTimeout(500);
+                    const iconVisible = await l.syncIcon.isVisible({ timeout: 2000 }).catch(() => false);
+                    if (iconVisible) {
+                        await l.syncIcon.click({ timeout: 5000 });
+                    } else {
+                        // Fall back to force-click if still not visible after hover
+                        await l.syncIcon.click({ force: true, timeout: 5000 });
+                    }
+                    if (syncDelay) await this.page.waitForTimeout(syncDelay);
+                    await this._waitForProcessing(l, processExtraDelay);
+                    await l.closeButton.click().catch(() => {});
+                } catch (e) {
+                    console.log("Could not open error details modal (non-fatal):", e.message);
+                }
             } else {
                 console.log("✅ Fully Processed — no invoice failures");
                 this._lastModalText = '';
@@ -250,6 +263,29 @@ exports.Uploadfile = class Uploadfile {
 
         return await this._searchAndVerify(
             l, uploadtype, FC, FcName, Brand, BrandName,
+            1, 20, 0, 0
+        );
+    }
+
+    async UploadGRN(username, password, FC, Brand, filePath) {
+        const FcName = getFCName(FC);
+        const BrandName = getBrandName(Brand);
+        const l = uploadLocators(this.page);
+
+        await this._login(username, password);
+        await this._openUploadModal(l, 'Purchase Order');
+        await l.fcInput.click();
+        await l.fcInput.fill(FC);
+        await l.textOption(FcName).click();
+        await l.brandCombobox.click();
+        await l.brandCombobox.fill(Brand);
+        await l.textOption(BrandName).click();
+        await l.fileInputNth(0).setInputFiles(filePath);
+        await l.submitButton.click();
+        await this.page.waitForTimeout(2000);
+
+        return await this._searchAndVerify(
+            l, 'Purchase Order', FC, FcName, Brand, BrandName,
             1, 20, 0, 0
         );
     }
@@ -383,16 +419,23 @@ exports.Uploadfile = class Uploadfile {
             }
 
             // Extract all SKU codes from CDMS product-not-found error messages.
-            // CDMS format: "Product not found in Product Master: <code> Product Name: ..."
-            // Fallback format (detail page): "SKU Code: <code>"
+            // CDMS formats observed:
+            //   "Product not found in Product Master: SKU Code: 201052DF Product Name: ..."
+            //   "Product not found in Product Master: 201052DF Product Name: ..."
+            //   "SKU Code: 201052DF"  (detail / fallback page)
             const patterns = [
-                /Product not found in Product Master:\s*(\S+)\s+Product Name/gi,
-                /SKU Code:\s*(\d+)/gi,
+                /Product not found in Product Master:\s*(?:SKU Code:\s*)?([A-Za-z0-9]+)\s+Product Name/gi,
+                /SKU Code:\s*([A-Za-z0-9]+)/gi,
             ];
+            const seen = new Set();
             for (const pattern of patterns) {
                 for (const m of [...modalText.matchAll(pattern)]) {
-                    failedCodes.add(m[1]);
-                    console.log(`[Product Master] Product not found — code: ${m[1]}`);
+                    const code = m[1];
+                    if (!seen.has(code)) {
+                        seen.add(code);
+                        failedCodes.add(code);
+                        console.log(`[Product Master] Product not found — code: ${code}`);
+                    }
                 }
             }
 
@@ -438,6 +481,49 @@ exports.Uploadfile = class Uploadfile {
             await this.page.waitForTimeout(3000);
         }
         console.log('Product master submitted successfully');
+        return true;
+    }
+
+    async UploadReturnRequestPdf(username, password, FC, Brand, filePaths) {
+        const FcName = getFCName(FC);
+        const BrandName = getBrandName(Brand);
+        const uploadtype = 'Return request pdf';
+        const l = uploadLocators(this.page);
+
+        await this._login(username, password);
+        await this._openUploadModal(l, uploadtype);
+
+        // FC(s) — first input inside the modal form
+        const modalFcInput = this.page.locator('.ant-modal-body .ant-form-item-control input').first();
+        await modalFcInput.click();
+        await modalFcInput.fill(FC);
+        await this.page.waitForTimeout(400);
+        await l.textOption(FcName).click();
+
+        // Brand
+        await l.brandCombobox.click();
+        await l.brandCombobox.fill(Brand);
+        await this.page.waitForTimeout(400);
+        await l.textOption(BrandName).click();
+
+        // File upload — "Upload a File" button triggers a file chooser
+        const [fileChooser] = await Promise.all([
+            this.page.waitForEvent('filechooser'),
+            this.page.getByRole('button', { name: /Upload a File/i }).first().click(),
+        ]);
+        await fileChooser.setFiles(filePaths);
+
+        await l.submitButton.click();
+        await this.page.waitForTimeout(3000);
+
+        // PDF uploads don't use the CSV processing modal (.ant-tag-blue strong),
+        // so skip _searchAndVerify. Just confirm the modal closed after submit.
+        const modalStillOpen = await l.submitButton.isVisible({ timeout: 2000 }).catch(() => false);
+        if (modalStillOpen) {
+            console.log('Return request PDF modal still open — waiting extra');
+            await this.page.waitForTimeout(3000);
+        }
+        console.log('Return request PDF uploaded successfully');
         return true;
     }
 

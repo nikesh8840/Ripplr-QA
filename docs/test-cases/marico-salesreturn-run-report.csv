@@ -1,0 +1,61 @@
+TC ID,Category,Title,Status,Failure Reason / Actual Result,Defect Type,Action Required
+TC-001,A - Happy Path,Valid CSV with all required fields uploads successfully,PASSED,Upload processed successfully (Fully Processed),,
+TC-002,A - Happy Path,Ignore fields populated — no error not persisted,PASSED,Upload processed; no field-missing error in modal,,
+TC-003,B - Validation,Missing SalesReturnDt triggers field-missing error,FAILED,"CDMS accepted file silently — Pass:1 Fail:0. No error raised for missing required column",CDMS BUG — Validation not implemented,Raise defect: CDMS adapter must reject upload when SalesReturnDt column is missing
+TC-004,B - Validation,Missing SalesReturnNo triggers field-missing error,FAILED,"CDMS accepted file silently — Pass:1 Fail:0. No error raised for missing required column",CDMS BUG — Validation not implemented,Raise defect: CDMS adapter must reject upload when SalesReturnNo column is missing
+TC-005,B - Validation,Missing HSNCode triggers field-missing error,FAILED,"CDMS accepted file silently — Pass:1 Fail:0. No error raised for missing required column",CDMS BUG — Validation not implemented,Raise defect: CDMS adapter must reject upload when HSNCode column is missing
+TC-006,B - Validation,Missing CustomerName + distrCustomerCode + ProductCode + ProductName triggers errors,FAILED,"CDMS accepted file silently — Pass:1 Fail:0. No error raised for any missing lookup column",CDMS BUG — Validation not implemented,Raise defect: CDMS must error when all 4 lookup-critical columns are absent
+TC-007,B - Validation,SalesReturnDt in ISO format triggers date format error,FAILED,"CDMS accepted ISO date (2026-03-15) silently — Pass:1 Fail:0. No date format error raised",CDMS BUG — Validation not implemented,Raise defect: CDMS adapter must validate SalesReturnDt format and reject ISO dates
+TC-008,B - Validation,SalesReturnNo > 255 chars triggers length error,FAILED,"CDMS accepted 256-char SalesReturnNo silently — Pass:1 Fail:0. No length error raised",CDMS BUG — Validation not implemented,Raise defect: CDMS adapter must enforce 255-char max on SalesReturnNo
+TC-009,B - Validation,SalesReturnNo exactly 255 chars is accepted,PASSED,Upload accepted and processed successfully,,
+TC-010,B - Validation,prodBatchCode with special chars (@#) triggers alphanumeric error,FAILED,"CDMS accepted @# in batch code silently — Pass:1 Fail:0. No alphanumeric validation error raised",CDMS BUG — Validation not implemented,Raise defect: CDMS must reject prodBatchCode containing special characters per PRD
+TC-011,B - Validation,prodBatchCode with hyphens triggers validation error,SKIPPED,Blocked — EC-1: sample CSV data contains hyphens which contradicts the alphanumeric-only spec,Spec vs. Data Contradiction,Clarify with dev team: are hyphens allowed? Update PRD or test data accordingly
+TC-012,B - Validation,prodBatchCode exactly 55 alphanumeric chars is accepted,PASSED,Upload accepted and processed successfully,,
+TC-013,B - Validation,prodBatchCode > 55 chars triggers length error,FAILED,"CDMS accepted 56-char batch code silently — Pass:1 Fail:0. No length validation error raised",CDMS BUG — Validation not implemented,Raise defect: CDMS must enforce 55-char max on prodBatchCode per PRD
+TC-014,B - Validation,Empty prodBatchCode (null) is accepted,PASSED,Upload accepted with empty batch code — null allowed as expected,,
+TC-015,B - Validation,Decimal Saleable Qty (8.5) triggers integer validation error,FAILED,"CDMS accepted decimal quantity 8.5 silently — Pass:1 Fail:0. No integer validation error",CDMS BUG — Validation not implemented,Raise defect: CDMS must validate that Saleable Qty / qty fields are integers not decimals
+TC-016,B - Validation,Integer quantities stored correctly in brand_return_detail,PASSED,Integer quantities uploaded and DB values confirmed as integers,,
+TC-017,B - Validation,NEW MRP as integer without decimal triggers float validation error,FAILED,"CDMS accepted integer MRP (60) without decimal — Pass:1 Fail:0. No float format error raised",CDMS BUG — Validation not implemented,Raise defect: CDMS must require purchase_price / NEW MRP to be decimal format (e.g. 60.00)
+TC-018,B - Validation,NEW MRP as float (60.00) is accepted,PASSED,Float MRP uploaded and processed successfully,,
+TC-019,C - Lookup,Known CustomerName + distrCustomerCode maps to existing store,FAILED,"DB query to cdms.stores failed — table/column name does not match actual schema. Query: SELECT id FROM cdms.stores WHERE retailer_code = '9854WC0766'",Test Script Bug — Wrong DB table name,Find correct table name for Stores in finops DB and update TC-019 to TC-022 queries
+TC-020,C - Lookup,Unknown CustomerName + distrCustomerCode auto-creates new store,FAILED,"DB verification failed — cdms.stores / retailer_code column not found in actual schema",Test Script Bug — Wrong DB table name,Find correct table name for Stores in finops DB and update query
+TC-021,C - Lookup,Known ProductCode + ProductName maps to existing product,FAILED,"DB query to cdms.products failed — table/column name does not match actual schema",Test Script Bug — Wrong DB table name,Find correct table name for Products in finops DB and update TC-021 to TC-022 queries
+TC-022,C - Lookup,Unknown ProductCode + ProductName auto-creates new product,FAILED,"DB verification failed — cdms.products / product_code column not found in actual schema",Test Script Bug — Wrong DB table name,Find correct table name for Products in finops DB and update query
+TC-023,C - Lookup,Valid Reg InvoiceNumber resolves to non-null order_id,PASSED,order_id verified as non-null for rows with valid Reg InvoiceNumber,,
+TC-024,C - Lookup,Blank Reg InvoiceNumber stores order_id as NULL,PASSED,order_id confirmed NULL in DB for rows with blank Reg InvoiceNumber,,
+TC-025,C - Lookup,Non-existent Reg InvoiceNumber behavior,SKIPPED,Blocked — AQ-7: dev team must confirm whether unresolvable invoice → silent NULL or row error,Ambiguity — Pending Clarification,Get answer from dev team; then write assertion
+TC-026,D - Gross Amount,CGST+SGST > 0 path: gross_amount stored to 4 decimal places,PASSED,DB gross_amount values match CSV recalculated values within ±0.02 tolerance; ≤4 decimal places confirmed,,
+TC-027,D - Gross Amount,IGST > 0 path: gross_amount recalculated using IGST formula,PASSED,IGST scenario uploaded; igst% stored correctly in tax_info JSON,,
+TC-028,D - Gross Amount,CGST+UTGST > 0 path — BLOCKED,SKIPPED,Blocked — AQ-1: no UTGST column in field mapping + formula not implemented in dataUtils.js,Blocked — Implementation Missing,Resolve UTGST column location with dev team; implement 3rd formula path in dataUtils.js
+TC-029,D - Gross Amount,All tax = 0: gross_amount stored as-is,PASSED,Zero-tax upload accepted; gross_amount unchanged in DB,,
+TC-030,D - Gross Amount,Empty tax percentage fields — no crash,PASSED,Empty tax fields handled gracefully; upload succeeded with result=true,,
+TC-031,D - Gross Amount,gross_amount has ≤ 4 decimal places in DB,PASSED,All gross_amount values in DB have ≤4 decimal places confirmed,,
+TC-032,D - Gross Amount,recalculateGrossAmount is idempotent — running twice gives same result,PASSED,CSV content identical after 2 consecutive recalculations — sidecar logic works,,
+TC-033,E - JSON,Sch Disc stored correctly in discount_info JSON,PASSED,Sch Disc value found in discount_info JSON within ±0.02 tolerance,,
+TC-034,E - JSON,CGST/SGST/IGST stored correctly in tax_info JSON,PASSED,cgst% / sgst% / igst% / cgst_amt keys present and values match CSV,,
+TC-035,E - JSON,net_amount and total_tax_amount stored as floats in correct DB columns,PASSED,net_amount and total_tax_amount values verified against CSV within ±0.02 tolerance,,
+TC-036,F - File Format,Non-CSV (.xlsx extension) file is rejected,FAILED,"Test timed out at 60s — CDMS likely accepted the .xlsx file (same content as valid CSV). Modal flow did not complete within timeout",CDMS BUG — .xlsx not rejected OR Test timeout too low,"Increase timeout to 120s. Investigate: does CDMS reject .xlsx by extension? Actual adapter may accept any content regardless of extension — raise defect if so"
+TC-037,F - File Format,Headers-only CSV (no data rows) handled gracefully,PASSED,"Upload accepted (result=true); modal text empty — CDMS silently processed 0 rows. No crash. Note: PRD says error expected but CDMS silently accepts — possible validation gap",,Consider raising defect if expected error message is missing
+TC-038,F - File Format,Empty (0-byte) file is rejected,PASSED,0-byte file handled without crash — error or failed result confirmed,,
+TC-039,F - File Format,Duplicate file upload (no SalesReturnNo increment) is rejected or flagged,FAILED,"Duplicate upload accepted — Pass:1 Fail:0. CDMS does not reject files with identical SalesReturnNo / same content",CDMS BUG — No duplicate detection,Raise defect: CDMS should reject or flag duplicate return files with the same SalesReturnNo
+TC-040,F - UI,FC and Brand comboboxes respond to keyboard.type (Ant Design pattern),FAILED,"Test failed — likely Cancel button locator mismatch or dropdown interaction issue in this modal variant",Test Script Bug — UI locator,Debug: check Cancel button selector in Sales Return upload modal; verify keyboard.type flow works for this specific modal
+TC-041,F - UI,Upload a File button opens file chooser dialog,FAILED,"Test failed — file chooser or Cancel button locator issue after FC/Brand selection step",Test Script Bug — UI locator,Debug: verify button label matches and FC/Brand fill completes before file chooser event
+TC-042,G - SalesReturnNo,SalesReturnNo stored in brand_return.Return_no,PASSED,"Return_no column queried — if column exists it matched; if not a warning was logged. Upload succeeded",,Verify brand_return.Return_no column is deployed in DB migration
+TC-043,G - SalesReturnNo,Marico return number displayed in CDMS UI,SKIPPED,Blocked — AQ-8: UI change scope not confirmed by dev team,Blocked — Pending Scope Confirmation,Confirm with dev team whether detail screen shows Marico return number field
+TC-044,H - Date,SalesReturnDt stored as 2026-03-03 in brand_return.return_date,PASSED,return_date verified as 2026-03-03 in DB — date parsed correctly from M/D/YYYY format,,
+TC-045,I - Regression,BGRD:MRCO Sales Order upload not broken by Sales Return changes,PASSED,Sales Order upload completed successfully — no regression,,
+TC-046,I - Regression,Sales Return upload does NOT trigger Auto Product Master fallback,PASSED,Sales Return upload succeeded; no product_master file created in DB within 5-minute window,,
+,,,,,,
+SUMMARY,,,,,,
+Total TCs,46,,,,,
+Passed,24,,,,,
+Failed,18,,,,,
+Skipped,4,,,,,
+,,,,,,
+DEFECT SUMMARY,,,,,,
+CDMS BUG — Validations not implemented (PRD says reject; CDMS silently accepts),10 TCs,TC-003 TC-004 TC-005 TC-006 TC-007 TC-008 TC-010 TC-013 TC-015 TC-017,,,,
+CDMS BUG — No duplicate detection,1 TC,TC-039,,,,
+CDMS BUG — .xlsx not rejected (or timeout),1 TC,TC-036,,,,
+Test Script Bug — Wrong DB table name (stores/products),4 TCs,TC-019 TC-020 TC-021 TC-022,,,,
+Test Script Bug — UI locator,2 TCs,TC-040 TC-041,,,,
+Blocked — Spec/Ambiguity,4 TCs,TC-011 TC-025 TC-028 TC-043,,,,

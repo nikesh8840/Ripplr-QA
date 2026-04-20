@@ -181,7 +181,7 @@ exports.VehicleAllocationPage = class VehicleAllocationPage {
         }
     }
 
-    async allocateVehiclewithfcbrand(username, password, fc, brand) {
+    async allocateVehiclewithfcbrand(username, password, fc, brand, count = 1) {
         const login = loginLocators(this.page);
         const l = vaLocators(this.page);
         try {
@@ -216,9 +216,10 @@ exports.VehicleAllocationPage = class VehicleAllocationPage {
             await this.page.waitForLoadState('networkidle', { timeout: 10000 });
             await screenshot(this.page, '02-filtered-results');
 
-            await l.tableRowCheckbox(0).click();
-            await l.tableRowCheckbox(1).click();
-            await l.tableRowCheckbox(2).click();
+            for (let i = 0; i < count; i++) {
+                await l.tableRowCheckbox(i).click();
+            }
+            console.log(`Selected ${count} invoice(s)`);
             await screenshot(this.page, '03-rows-selected');
 
             await l.allocateVehicleButton.click();

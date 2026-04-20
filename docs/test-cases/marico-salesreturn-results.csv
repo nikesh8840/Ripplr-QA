@@ -1,0 +1,48 @@
+TC ID,Title,Status
+TC-001,Valid CSV with all required fields uploads successfully,PASSED
+TC-002,Ignore fields populated — no error not persisted,PASSED
+TC-003,Missing SalesReturnDt triggers field-missing error,FAILED
+TC-004,Missing SalesReturnNo triggers field-missing error,FAILED
+TC-005,Missing HSNCode triggers field-missing error,FAILED
+TC-006,Missing CustomerName + distrCustomerCode + ProductCode + ProductName triggers errors,FAILED
+TC-007,SalesReturnDt in ISO format triggers date format error,FAILED
+TC-008,SalesReturnNo > 255 chars triggers length error,FAILED
+TC-009,SalesReturnNo exactly 255 chars is accepted,PASSED
+TC-010,prodBatchCode with special chars (@#) triggers alphanumeric error,FAILED
+TC-011,prodBatchCode with hyphens triggers validation error,SKIPPED
+TC-012,prodBatchCode exactly 55 alphanumeric chars is accepted,PASSED
+TC-013,prodBatchCode > 55 chars triggers length error,FAILED
+TC-014,Empty prodBatchCode (null) is accepted,PASSED
+TC-015,Decimal Saleable Qty (8.5) triggers integer validation error,FAILED
+TC-016,Integer quantities stored correctly in brand_return_detail,PASSED
+TC-017,NEW MRP as integer without decimal triggers float validation error,FAILED
+TC-018,NEW MRP as float (60.00) is accepted,PASSED
+TC-019,Known CustomerName + distrCustomerCode maps to existing store,FAILED
+TC-020,Unknown CustomerName + distrCustomerCode auto-creates new store,FAILED
+TC-021,Known ProductCode + ProductName maps to existing product,FAILED
+TC-022,Unknown ProductCode + ProductName auto-creates new product,FAILED
+TC-023,Valid Reg InvoiceNumber resolves to non-null order_id,PASSED
+TC-024,Blank Reg InvoiceNumber stores order_id as NULL,PASSED
+TC-025,Non-existent Reg InvoiceNumber behavior,SKIPPED
+TC-026,CGST+SGST > 0 path: gross_amount stored to 4 decimal places,PASSED
+TC-027,IGST > 0 path: gross_amount recalculated using IGST formula,PASSED
+TC-028,CGST+UTGST > 0 path,SKIPPED
+TC-029,All tax = 0: gross_amount stored as-is,PASSED
+TC-030,Empty tax percentage fields — no crash gross_amount stored as-is,PASSED
+TC-031,gross_amount has <= 4 decimal places in DB,PASSED
+TC-032,recalculateGrossAmount is idempotent — running twice gives same result,PASSED
+TC-033,Sch Disc stored correctly in discount_info JSON,PASSED
+TC-034,CGST/SGST/IGST stored correctly in tax_info JSON,PASSED
+TC-035,net_amount and total_tax_amount stored as floats in correct DB columns,PASSED
+TC-036,Non-CSV (.xlsx extension) file is rejected,FAILED
+TC-037,Headers-only CSV (no data rows) handled gracefully,PASSED
+TC-038,Empty (0-byte) file is rejected,PASSED
+TC-039,Duplicate file upload (no SalesReturnNo increment) is rejected or flagged,FAILED
+TC-040,FC and Brand comboboxes respond to keyboard.type (Ant Design pattern),FAILED
+TC-041,Upload a File button opens file chooser dialog,FAILED
+TC-042,SalesReturnNo stored in brand_return.Return_no,PASSED
+TC-043,Marico return number displayed in CDMS UI,SKIPPED
+TC-044,SalesReturnDt stored as 2026-03-03 in brand_return.return_date,PASSED
+TC-045,BGRD:MRCO Sales Order upload not broken by Sales Return changes,PASSED
+TC-046,Sales Return upload does NOT trigger Auto Product Master fallback,PASSED
+,TOTAL: 46 | PASSED: 24 | FAILED: 18 | SKIPPED: 4,

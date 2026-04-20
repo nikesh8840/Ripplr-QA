@@ -1,7 +1,8 @@
 const { Uploadfile } = require('../pages/Aupload.page');
 const config = require('../config/base.config');
+const { incrementSrnInPdf } = require('./pdfUtils');
 const pmBrandConfig = require('../config/ProductMaster');
-const { incrementBillNumbers, syncInvoiceNumbers, recalculateGrossAmount, randomizeLastColumn } = require('./dataUtils');
+const { incrementBillNumbers, syncInvoiceNumbers, recalculateGrossAmount, randomizeLastColumn, refreshDatesWithin15Days } = require('./dataUtils');
 const { extractProductsFromSalesOrderCSV, filterFailedProducts, buildProductMasterCSV } = require('./productMasterUtils');
 const path = require('path');
 
@@ -70,7 +71,9 @@ async function singleFileUploadWithIncrement(page, baseURL, fc, brand, csvFileNa
     }
 
     // Extract products from sales order CSV, filter to only failed ones
-    const allProducts     = extractProductsFromSalesOrderCSV(filePath, config.productMaster.salesOrderCols);
+    // Brand config may override salesOrderCols (e.g. different MRP column name)
+    const salesOrderCols  = brandPmCfg.salesOrderCols || config.productMaster.salesOrderCols;
+    const allProducts     = extractProductsFromSalesOrderCSV(filePath, salesOrderCols);
     const missingProducts = filterFailedProducts(allProducts, failedCodes);
 
     if (missingProducts.length === 0) {
@@ -133,7 +136,7 @@ async function threeFileUploadWithIncrement(page, baseURL, fc, brand, csvFileNam
 
 // Helper for BGRD:MRCO Sales Return upload with SalesReturnNo increment
 async function salesReturnBgrdMrcoWithIncrement(page, baseURL) {
-    const salesOrderPath = path.resolve(__dirname, '../test-data/bgrd-mrco/salesmarico.csv');
+    const salesOrderPath = path.resolve(__dirname, '../test-data/Orders/mrco/mrco.csv');
     const filePath = path.resolve(
         __dirname,
         '../test-data/bgrd-mrco-reutrn/MARCO_BrandReturn.csv'
@@ -157,6 +160,131 @@ async function salesReturnBgrdMrcoWithIncrement(page, baseURL) {
     return result;
 }
 
+// Helper for Return request pdf uploads (Damage / Expiry PDFs).
+// Increments the SRN No in each PDF before uploading to avoid duplicate rejection.
+async function returnRequestPdfUpload(page, baseURL, FC, Brand, filePaths) {
+    for (const fp of filePaths) {
+        await incrementSrnInPdf(fp);
+    }
+    const uploadfile = new Uploadfile(page);
+    await page.goto(baseURL);
+    const result = await uploadfile.UploadReturnRequestPdf(
+        config.credentials.username, config.credentials.password, FC, Brand, filePaths
+    );
+    return result;
+}
+
+// Helper for GRN (Purchase Order) uploads from test-data/GRN/{brand}.csv
+async function grnUpload(page, baseURL, fc, brand) {
+    const filePath = path.resolve(__dirname, `../test-data/GRN/${brand}.csv`);
+    refreshDatesWithin15Days(filePath);
+
+    // Brand-specific bill/GRN column header
+    const billColumnMap = {
+        'gdj': 'Bill No',
+        'nesl': 'Invoice Number',
+    };
+    const columnHeader = billColumnMap[brand] || 'GRN Number';
+    await incrementBillNumbers(filePath, columnHeader);
+    const uploadfile = new Uploadfile(page);
+    await page.goto(baseURL);
+    const result = await uploadfile.UploadGRN(
+        config.credentials.username, config.credentials.password, fc, brand, filePath
+    );
+    return result;
+}
+
+// Brand-specific config for Sales Order uploads from test-data/Orders/{brand}/
+// Each brand lists its CSV files (in upload order) and the bill column header per file.
+const SALES_ORDER_BRAND_CONFIG = {
+    'brit': {
+        files:   ['m1.csv', 'h1.csv', 'sr.csv'],
+        columns: ['Invoice No', 'Invoice No', 'Invoice No'],
+        brand:   'britannia',
+    },
+    'britis': {
+        files:   ['m1.csv', 'h1.csv', 'sr.csv'],
+        columns: ['Invoice No', 'Invoice No', 'Invoice No'],
+    },
+    'britrw': {
+        files:   ['m1.csv', 'h1.csv', 'sr.csv'],
+        columns: ['Invoice No', 'Invoice No', 'Invoice No'],
+    },
+    'gdj': {
+        files:   ['u.csv', 'c.csv'],
+        columns: ['Bill No', 'CN_Adjusted_Bill_No'],
+    },
+    'gdjgt': {
+        files:   ['u.csv', 'c.csv'],
+        columns: ['Bill No', 'CN_Adjusted_Bill_No'],
+    },
+    'gdjmt': {
+        files:   ['u.csv', 'c.csv'],
+        columns: ['Bill No', 'CN_Adjusted_Bill_No'],
+    },
+    'hul': {
+        files:   ['bl.csv', 'sr.csv', 's.csv'],
+        columns: ['Bill Number', 'BillRefNo', 'BILL_NUMBER'],
+    },
+    'huls': {
+        files:   ['bl.csv', 'sr.csv', 's.csv'],
+        columns: ['Bill Number', 'BillRefNo', 'BILL_NUMBER'],
+    },
+    'mrco': {
+        files:   ['mrco.csv'],
+        columns: ['Bill Number'],
+    },
+    'nesl': {
+        files:   ['ms3.csv', 'bl3.csv', 'ss3.csv'],
+        columns: ['Bill Number / Sales Return Number', 'Sales Invoice Number', 'Bill Number'],
+        brand:   'nestle',
+    },
+    'snpr': {
+        files:   ['sunpure.csv'],
+        columns: ['Sales Invoice No'],
+    },
+};
+
+// Helper for Sales Order uploads from test-data/Orders/{brand}/
+// Auto-picks single/two/three file upload method based on file count.
+async function salesOrderUpload(page, baseURL, fc, brandFolder) {
+    const brandCfg = SALES_ORDER_BRAND_CONFIG[brandFolder];
+    if (!brandCfg) {
+        throw new Error(`No sales order config for brand "${brandFolder}". Add it to SALES_ORDER_BRAND_CONFIG in uploadTestHelper.js`);
+    }
+
+    const dataPath = path.resolve(__dirname, `../test-data/Orders/${brandFolder}`);
+    const { files, columns } = brandCfg;
+    const brand = brandCfg.brand || brandFolder;
+
+    // Refresh dates & increment bill numbers for each file
+    for (let i = 0; i < files.length; i++) {
+        const filePath = path.join(dataPath, files[i]);
+        refreshDatesWithin15Days(filePath);
+        await incrementBillNumbers(filePath, columns[i]);
+    }
+
+    const uploadfile = new Uploadfile(page);
+    await page.goto(baseURL);
+
+    // Pick upload method based on file count
+    let result;
+    if (files.length === 1) {
+        result = await uploadfile.UploadSinglefileFcBrand(
+            config.credentials.username, config.credentials.password, 'Sales Order', fc, brand
+        );
+    } else if (files.length === 2) {
+        result = await uploadfile.UploadSalesOrdertwo(
+            config.credentials.username, config.credentials.password, 'Sales Order', fc, brand
+        );
+    } else {
+        result = await uploadfile.UploadSalesOrder(
+            config.credentials.username, config.credentials.password, 'Sales Order', fc, brand
+        );
+    }
+    return result;
+}
+
 module.exports = {
     simpleUpload,
     singleFileUpload,
@@ -165,5 +293,9 @@ module.exports = {
     singleFileUploadWithIncrement,
     twoFileUploadWithIncrement,
     threeFileUploadWithIncrement,
-    salesReturnBgrdMrcoWithIncrement
+    salesReturnBgrdMrcoWithIncrement,
+    returnRequestPdfUpload,
+    grnUpload,
+    salesOrderUpload,
+    SALES_ORDER_BRAND_CONFIG
 };

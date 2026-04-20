@@ -13,7 +13,7 @@ exports.LoginPage = class LoginPage {
         await login.passwordInput.fill(password);
         await login.loginButton.click();
         try {
-            await this.page.waitForTimeout(10000); // Wait for 10 seconds
+            await this.page.waitForTimeout(1000); // Wait for 10 seconds
             console.log('Login successful, waiting for Dashboard to load...');
             await this.page.waitForSelector('text=Dashboard', { timeout: 5000 });
             return true;

@@ -19,11 +19,18 @@ const uploadLocators = (page) => ({
     fcInputLegacy6:             page.locator('#rc_select_6'),
 
     // --- Dynamic text options (FC name / Brand name resolved at runtime) ---
-    textOption: (text)       => page.getByText(text),
+    // Scoped to the visible AntD dropdown overlay to avoid accidentally matching
+    // table rows or navigation links that contain the same text (e.g. brand names
+    // that also appear in the upload history table).
+    textOption: (text)       => page.locator('.ant-select-dropdown:not(.ant-select-dropdown-hidden)').getByText(text),
 
     // --- File inputs ---
+    // fileInputNth covers both UI layouts:
+    //   1. Multi-file ant-space layout (3-file / 2-file uploads — ant-space wraps each input)
+    //   2. Single-file AntD Upload dragger layout (e.g. BGRD:SNPR — no ant-space wrapper)
+    // Scoped to modal/drawer body so stray hidden inputs elsewhere on the page are excluded.
     singleFileInput:            page.locator('input[type="file"]'),
-    fileInputNth: (n)        => page.locator('div.ant-space.ant-space-horizontal.ant-space-align-center input[type="file"]').nth(n),
+    fileInputNth: (n)        => page.locator('.ant-modal-body input[type="file"], .ant-drawer-body input[type="file"]').nth(n),
 
     // --- Form actions ---
     submitButton:               page.getByRole('button', { name: 'Submit' }),

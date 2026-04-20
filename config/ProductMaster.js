@@ -25,6 +25,24 @@ module.exports = {
         },
     },
 
+    snpr: {
+        templatePath: path.join(dataDir, 'snpr.csv'),
+        outputPath:   path.join(dataDir, 'snpr-auto.csv'),
+        columnMap: {
+            productCode:        'Product Code',
+            productDescription: 'Product Name',
+            mrp:                'MRP',
+            batch:              'Batch',
+        },
+        // snpr sales order uses 'MRP' (not 'New MRP' used by other brands)
+        salesOrderCols: {
+            productCode: 'Product Code',
+            productName: 'Product Name',
+            batch:       'Batch Code',
+            mrp:         'MRP',
+        },
+    },
+
     // ── Add other brands below when needed ──────────────────────────────────
     // apx: {
     //     templatePath: path.join(dataDir, 'apx.csv'),

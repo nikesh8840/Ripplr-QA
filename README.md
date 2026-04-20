@@ -51,6 +51,10 @@ npm run test:report
 # npx playwright test tests/adaptorupload/upload.spec.js  --headed  
 # npx playwright test tests/vehicle-allocation/dl-rfclose.spec.js --headed                 
 # npx playwright test tests/combined-flow.spec.js --headed
+# npx playwright test tests/logistics/delivery-flow.spec.js --headed -g 
+# BGRD-SNPR SEQ=DL,PD,DA,CA
+
+
 
 
 # Refactor this Playwright code
