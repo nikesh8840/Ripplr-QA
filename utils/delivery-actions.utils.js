@@ -9,8 +9,10 @@ const FILE_PATH = path.resolve(__dirname, '../test-data/BILLS (1) (1).pdf');
  * @param {number} rowNumber - 1-based row index (1 = first data row)
  */
 async function markRowAsDelivered(page, rowNumber) {
+    let invoiceNo = '';
     try {
         console.log(`markRowAsDelivered: row ${rowNumber}`);
+        invoiceNo = (await page.locator(`tr:nth-child(${rowNumber + 1}) td:nth-child(2)`).innerText()).split('\n')[0].trim();
         await page.locator(`tr:nth-child(${rowNumber + 1}) td:nth-child(7) .ant-select-selector`).click();
         await page.waitForSelector('.ant-select-dropdown', { timeout: 5000 });
         await page.locator('.ant-select-dropdown .ant-select-item:has-text("Delivered"):not([disabled]):not([hidden]):not(.ant-select-item-option-disabled)').first().click();
@@ -21,9 +23,10 @@ async function markRowAsDelivered(page, rowNumber) {
         await page.getByRole("radio", { name: "Invoice Returned" }).check();
         let collectableamount = await page.locator(`div[class='sc-bczRLJ sc-gsnTZi jkiZmR jnFvAE'] div:nth-child(2) div:nth-child(2) span:nth-child(1)`).innerText();
         collectableamount = collectableamount.replace('₹', '').replace(',', '');
-        console.log('collectableamount', collectableamount);
+        const enteredAmount = Math.ceil(Number(collectableamount) / 4);
+        console.log(`collectableamount: ${collectableamount}, entered: ${enteredAmount}`);
         await page.locator("input[name='cash']").click();
-        await page.locator("input[name='cash']").fill(String(Math.ceil(collectableamount / 4)));
+        await page.locator("input[name='cash']").fill(String(enteredAmount));
         await page.getByRole("button", { name: "Collection Details" }).click();
         await page.getByRole("button", { name: "Update" }).click();
         await page.getByRole('link', { name: 'Invoice List' }).click();
@@ -55,11 +58,11 @@ async function markRowAsDelivered(page, rowNumber) {
             await verifyIcon.click();
             await page.waitForTimeout(500);
         }
-        console.log(`Row ${rowNumber} marked as Delivered`);
-        return true;
+        console.log(`Row ${rowNumber} marked as Delivered — invoice: ${invoiceNo}, collected: ${enteredAmount}`);
+        return { success: true, invoiceNo, collectedAmount: enteredAmount };
     } catch (err) {
         console.error(`markRowAsDelivered row ${rowNumber} failed:`, err);
-        return false;
+        return { success: false, invoiceNo, collectedAmount: 0 };
     }
 }
 
@@ -69,8 +72,10 @@ async function markRowAsDelivered(page, rowNumber) {
  * @param {number} rowNumber - 1-based row index (1 = first data row)
  */
 async function markRowAsPartialDelivered(page, rowNumber) {
+    let invoiceNo = '';
     try {
         console.log(`markRowAsPartialDelivered: row ${rowNumber}`);
+        invoiceNo = (await page.locator(`tr:nth-child(${rowNumber + 1}) td:nth-child(2)`).innerText()).split('\n')[0].trim();
         await page.locator(`tr:nth-child(${rowNumber + 1}) td:nth-child(7) .ant-select-selector`).click();
         await page.waitForSelector('.ant-select-dropdown', { timeout: 5000 });
         await page.locator('.ant-select-dropdown .ant-select-item:has-text("Partial Delivered"):not([disabled]):not([hidden]):not(.ant-select-item-option-disabled)').first().click();
@@ -89,9 +94,10 @@ async function markRowAsPartialDelivered(page, rowNumber) {
         await page.getByRole("radio", { name: "Invoice Returned" }).check();
         let collectableamount = await page.locator(`div[class='sc-bczRLJ sc-gsnTZi jkiZmR jnFvAE'] div:nth-child(2) div:nth-child(2) span:nth-child(1)`).innerText();
         collectableamount = collectableamount.replace('₹', '').replace(',', '');
-        console.log('collectableamount', collectableamount);
+        const enteredAmount = Math.ceil(Number(collectableamount) / 4);
+        console.log(`collectableamount: ${collectableamount}, entered: ${enteredAmount}`);
         await page.locator("input[name='cash']").click();
-        await page.locator("input[name='cash']").fill(String(Math.ceil(collectableamount / 4)));
+        await page.locator("input[name='cash']").fill(String(enteredAmount));
         await page.getByRole("button", { name: "Collection Details" }).click();
         await page.getByRole("button", { name: "Update" }).click();
         await page.getByRole('link', { name: 'Invoice List' }).click();
@@ -121,11 +127,11 @@ async function markRowAsPartialDelivered(page, rowNumber) {
             await pdVerifyIcon.click();
             await page.waitForTimeout(500);
         }
-        console.log(`Row ${rowNumber} marked as Partial Delivered`);
-        return true;
+        console.log(`Row ${rowNumber} marked as Partial Delivered — invoice: ${invoiceNo}, collected: ${enteredAmount}`);
+        return { success: true, invoiceNo, collectedAmount: enteredAmount };
     } catch (err) {
         console.error(`markRowAsPartialDelivered row ${rowNumber} failed:`, err);
-        return false;
+        return { success: false, invoiceNo, collectedAmount: 0 };
     }
 }
 
@@ -135,8 +141,10 @@ async function markRowAsPartialDelivered(page, rowNumber) {
  * @param {number} rowNumber - 1-based row index (1 = first data row)
  */
 async function markRowAsDeliveryAttempted(page, rowNumber) {
+    let invoiceNo = '';
     try {
         console.log(`markRowAsDeliveryAttempted: row ${rowNumber}`);
+        invoiceNo = (await page.locator(`tr:nth-child(${rowNumber + 1}) td:nth-child(2)`).innerText()).split('\n')[0].trim();
         await page.locator(`tr:nth-child(${rowNumber + 1}) td:nth-child(7) .ant-select-selector`).click();
         await page.waitForSelector('.ant-select-dropdown', { timeout: 5000 });
         await page.locator('.ant-select-dropdown .ant-select-item:has-text("Delivery Attempted"):not([disabled]):not([hidden]):not(.ant-select-item-option-disabled)').first().click();
@@ -148,11 +156,11 @@ async function markRowAsDeliveryAttempted(page, rowNumber) {
         await page.getByRole("button", { name: "Update" }).click();
         await page.waitForTimeout(700);
         await page.locator(`tr:nth-child(${rowNumber + 1}) td .fAmufx`).nth(4).click();
-        console.log(`Row ${rowNumber} marked as Delivery Attempted`);
-        return true;
+        console.log(`Row ${rowNumber} marked as Delivery Attempted — invoice: ${invoiceNo}`);
+        return { success: true, invoiceNo, collectedAmount: 0 };
     } catch (err) {
         console.error(`markRowAsDeliveryAttempted row ${rowNumber} failed:`, err);
-        return false;
+        return { success: false, invoiceNo, collectedAmount: 0 };
     }
 }
 

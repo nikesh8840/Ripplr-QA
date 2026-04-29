@@ -1,6 +1,7 @@
 const { Uploadfile } = require('../pages/Aupload.page');
 const config = require('../config/base.config');
-const { incrementSrnInPdf } = require('./pdfUtils');
+const { incrementSrnInPdf, replaceInvoiceNumbersInPdf } = require('./pdfUtils');
+const { incrementSalesReturnNoInPdf } = require('./pdfUtilsColumnSrn');
 const pmBrandConfig = require('../config/ProductMaster');
 const { incrementBillNumbers, syncInvoiceNumbers, recalculateGrossAmount, randomizeLastColumn, refreshDatesWithin15Days } = require('./dataUtils');
 const { extractProductsFromSalesOrderCSV, filterFailedProducts, buildProductMasterCSV } = require('./productMasterUtils');
@@ -174,6 +175,35 @@ async function returnRequestPdfUpload(page, baseURL, FC, Brand, filePaths) {
     return result;
 }
 
+// Helper for Return request pdf uploads where the PDF uses a "Sales Return No"
+// column header layout (Marico). Increments via the column-aware helper instead
+// of the URN/Salvage-Ref-No path used by returnRequestPdfUpload.
+async function returnRequestPdfUploadColumnSrn(page, baseURL, FC, Brand, filePaths) {
+    for (const fp of filePaths) {
+        await incrementSalesReturnNoInPdf(fp);
+    }
+    const uploadfile = new Uploadfile(page);
+    await page.goto(baseURL);
+    const result = await uploadfile.UploadReturnRequestPdf(
+        config.credentials.username, config.credentials.password, FC, Brand, filePaths
+    );
+    return result;
+}
+
+// Helper for Invoice PDF Re-Upload. Patches test-data/InvoicePdfUpload/{brand}.pdf in
+// place with invoice numbers sourced from test-data/InvoicePdfUpload/{brand}.js (which
+// reads them from test-data/Orders/{brand}/m1.csv), then uploads the PDF.
+async function invoicePdfReUpload(page, baseURL, FC, brandFolder) {
+    const pdfPath = await replaceInvoiceNumbersInPdf(brandFolder);
+    const brandCode = (SALES_ORDER_BRAND_CONFIG[brandFolder] && SALES_ORDER_BRAND_CONFIG[brandFolder].brand) || brandFolder;
+    const uploadfile = new Uploadfile(page);
+    await page.goto(baseURL);
+    const result = await uploadfile.UploadInvoicePdfReUpload(
+        config.credentials.username, config.credentials.password, FC, brandCode, pdfPath
+    );
+    return result;
+}
+
 // Helper for GRN (Purchase Order) uploads from test-data/GRN/{brand}.csv
 async function grnUpload(page, baseURL, fc, brand) {
     const filePath = path.resolve(__dirname, `../test-data/GRN/${brand}.csv`);
@@ -181,8 +211,9 @@ async function grnUpload(page, baseURL, fc, brand) {
 
     // Brand-specific bill/GRN column header
     const billColumnMap = {
-        'gdj': 'Bill No',
+        'gdj':  'Bill No',
         'nesl': 'Invoice Number',
+        'mrco': 'GRNNumber',
     };
     const columnHeader = billColumnMap[brand] || 'GRN Number';
     await incrementBillNumbers(filePath, columnHeader);
@@ -295,6 +326,8 @@ module.exports = {
     threeFileUploadWithIncrement,
     salesReturnBgrdMrcoWithIncrement,
     returnRequestPdfUpload,
+    returnRequestPdfUploadColumnSrn,
+    invoicePdfReUpload,
     grnUpload,
     salesOrderUpload,
     SALES_ORDER_BRAND_CONFIG

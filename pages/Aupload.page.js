@@ -527,6 +527,51 @@ exports.Uploadfile = class Uploadfile {
         return true;
     }
 
+    async UploadInvoicePdfReUpload(username, password, FC, Brand, filePath) {
+        const FcName = getFCName(FC);
+        const BrandName = getBrandName(Brand);
+        const uploadtype = 'Invoice PDF Re-Upload';
+        const l = uploadLocators(this.page);
+
+        await this._login(username, password);
+        await this._openUploadModal(l, uploadtype);
+
+        const modalFcInput = this.page.locator('.ant-modal-body .ant-form-item-control input').first();
+        await modalFcInput.click();
+        await modalFcInput.fill(FC);
+        await this.page.waitForTimeout(400);
+        await l.textOption(FcName).click();
+
+        await l.brandCombobox.click();
+        await l.brandCombobox.fill(Brand);
+        await this.page.waitForTimeout(400);
+        await l.textOption(BrandName).click();
+
+        // Single PDF — scoped to the modal body. Try setInputFiles first,
+        // fall back to file chooser if the modal uses an "Upload a File" button.
+        const modalFileInput = this.page.locator('.ant-modal-body input[type="file"]').first();
+        if (await modalFileInput.count() > 0) {
+            await modalFileInput.setInputFiles(filePath);
+        } else {
+            const [fileChooser] = await Promise.all([
+                this.page.waitForEvent('filechooser'),
+                this.page.getByRole('button', { name: /Upload a File/i }).first().click(),
+            ]);
+            await fileChooser.setFiles(filePath);
+        }
+
+        await l.submitButton.click();
+        await this.page.waitForTimeout(3000);
+
+        const modalStillOpen = await l.submitButton.isVisible({ timeout: 2000 }).catch(() => false);
+        if (modalStillOpen) {
+            console.log('Invoice PDF Re-Upload modal still open — waiting extra');
+            await this.page.waitForTimeout(3000);
+        }
+        console.log('Invoice PDF Re-Upload submitted successfully');
+        return true;
+    }
+
     async uploadFilesByType(username, password, uploadtype, FC, Brand, fileTypes) {
         try {
             const filePaths = fileTypes.map(fileType => getFilePath(FC, Brand, fileType));

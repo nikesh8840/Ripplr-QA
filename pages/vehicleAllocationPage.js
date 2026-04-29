@@ -1,4 +1,3 @@
-const invoiceData = require('../test-data/allocation/vehicleallocationdata');
 const { getFCName, getBrandName } = require('../utils/fcbrands');
 const loginLocators = require('../locators/login.locators');
 const vaLocators = require('../locators/vehicleAllocation.locators');

@@ -311,9 +311,10 @@ function randomizeLastColumn(csvFilePath) {
 }
 
 /**
- * Scans all date columns (DD-MM-YYYY) in a CSV and shifts any date older than
- * `maxAgeDays` to a random date within the last `maxAgeDays` days from today.
- * Non-date columns and values that don't match DD-MM-YYYY are left untouched.
+ * Scans all date columns (DD-MM-YYYY or DD/MM/YYYY) in a CSV and shifts any
+ * date older than `maxAgeDays` to a random date within the last `maxAgeDays`
+ * days from today, preserving the original separator per column.
+ * Non-date columns and values that don't match either format are left untouched.
  *
  * @param {string} csvFilePath
  * @param {number} [maxAgeDays=15]
@@ -325,23 +326,27 @@ function refreshDatesWithin15Days(csvFilePath, maxAgeDays = 15) {
         if (lines.length < 2) return;
 
         const header = lines[0].split(',');
-        const ddmmyyyyRegex = /^\d{2}-\d{2}-\d{4}$/;
+        const dateRegex = /^\d{2}([-/])\d{2}\1\d{4}$/;
 
-        // Detect which columns contain DD-MM-YYYY dates by checking the first data row
+        // Detect which columns contain DD-MM-YYYY or DD/MM/YYYY dates by checking
+        // the first data row. Remember the separator per column so we can preserve it.
         const firstData = lines[1].split(',');
         const dateColIndices = [];
+        const dateColSep     = {};
         for (let c = 0; c < firstData.length; c++) {
-            if (ddmmyyyyRegex.test(firstData[c].trim())) {
+            const m = (firstData[c] || '').trim().match(dateRegex);
+            if (m) {
                 dateColIndices.push(c);
+                dateColSep[c] = m[1]; // '-' or '/'
             }
         }
 
         if (dateColIndices.length === 0) {
-            console.log(`[refreshDates] No DD-MM-YYYY date columns detected in ${csvFilePath}`);
+            console.log(`[refreshDates] No DD-MM-YYYY or DD/MM/YYYY date columns detected in ${csvFilePath}`);
             return;
         }
 
-        console.log(`[refreshDates] Date columns found: ${dateColIndices.map(i => header[i]?.trim()).join(', ')}`);
+        console.log(`[refreshDates] Date columns found: ${dateColIndices.map(i => `${header[i]?.trim()}(${dateColSep[i]})`).join(', ')}`);
 
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -350,15 +355,15 @@ function refreshDatesWithin15Days(csvFilePath, maxAgeDays = 15) {
 
         const pad = (n) => String(n).padStart(2, '0');
 
-        const randomDateWithinRange = () => {
+        const randomDateWithinRange = (sep) => {
             const daysAgo = Math.floor(Math.random() * maxAgeDays);
             const d = new Date(today);
             d.setDate(d.getDate() - daysAgo);
-            return `${pad(d.getDate())}-${pad(d.getMonth() + 1)}-${d.getFullYear()}`;
+            return `${pad(d.getDate())}${sep}${pad(d.getMonth() + 1)}${sep}${d.getFullYear()}`;
         };
 
-        const parseDDMMYYYY = (str) => {
-            const [dd, mm, yyyy] = str.split('-').map(Number);
+        const parseDate = (str, sep) => {
+            const [dd, mm, yyyy] = str.split(sep).map(Number);
             return new Date(yyyy, mm - 1, dd);
         };
 
@@ -371,11 +376,13 @@ function refreshDatesWithin15Days(csvFilePath, maxAgeDays = 15) {
 
             for (const c of dateColIndices) {
                 const val = (cols[c] || '').trim();
-                if (!ddmmyyyyRegex.test(val)) continue;
+                const sep = dateColSep[c];
+                const colRegex = new RegExp(`^\\d{2}\\${sep}\\d{2}\\${sep}\\d{4}$`);
+                if (!colRegex.test(val)) continue;
 
-                const date = parseDDMMYYYY(val);
+                const date = parseDate(val, sep);
                 if (date < cutoff) {
-                    const newDate = randomDateWithinRange();
+                    const newDate = randomDateWithinRange(sep);
                     console.log(`[refreshDates] Row ${i} "${header[c]?.trim()}": ${val} → ${newDate}`);
                     cols[c] = newDate;
                     changed = true;

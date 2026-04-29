@@ -373,6 +373,7 @@ exports.DlAndRFClosePage = class DlAndRFClosePage {
      */
     async deliveryFlowWithFcBrand(username, password, fc, brand, actionSeq = ['DL']) {
         const l = dlLocators(this.page);
+        const rows = [];
         try {
             await this._login(username, password);
 
@@ -428,14 +429,18 @@ exports.DlAndRFClosePage = class DlAndRFClosePage {
 
                 console.log(`Row ${rowNumber}: ${action}`);
                 if (action === 'DL') {
-                    await markRowAsDelivered(this.page, rowNumber);
+                    const rowResult = await markRowAsDelivered(this.page, rowNumber);
+                    rows.push(rowResult);
                     needsDocUpload = true;
                 } else if (action === 'PD') {
-                    await markRowAsPartialDelivered(this.page, rowNumber);
+                    const rowResult = await markRowAsPartialDelivered(this.page, rowNumber);
+                    rows.push(rowResult);
                     needsDocUpload = true;
                 } else if (action === 'DA') {
-                    await markRowAsDeliveryAttempted(this.page, rowNumber);
+                    const rowResult = await markRowAsDeliveryAttempted(this.page, rowNumber);
+                    rows.push(rowResult);
                 } else if (action === 'CA') {
+                    const invoiceNo = (await this.page.locator(`tr:nth-child(${i + 2}) td:nth-child(2)`).innerText()).split('\n')[0].trim();
                     await l.statusDropdownNth(i + 2).click();
                     await this.page.waitForSelector('.ant-select-dropdown', { timeout: 5000 });
                     await l.cancelledOption.click();
@@ -447,7 +452,8 @@ exports.DlAndRFClosePage = class DlAndRFClosePage {
                     await l.updateButton.click();
                     await this.page.waitForTimeout(700);
                     await l.rowActionIconNth(i + 2, 4).click();
-                    console.log(`Row ${rowNumber} marked as Cancelled`);
+                    console.log(`Row ${rowNumber} marked as Cancelled — invoice: ${invoiceNo}`);
+                    rows.push({ success: true, invoiceNo, collectedAmount: 0 });
                 }
             }
 
@@ -490,10 +496,10 @@ exports.DlAndRFClosePage = class DlAndRFClosePage {
             }
 
             console.log(`Delivery flow completed: ${actionSeq.join(',')}`);
-            return true;
+            return { success: true, rows };
         } catch (err) {
             console.error(`Delivery flow failed:`, err);
-            return false;
+            return { success: false, rows };
         }
     }
 

@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const invoiceData = require('../../test-data/allocation/vehicleallocationdata');
 const vaLocators = require('../../locators/vehicleAllocation.locators');
 
 const SCREENSHOT_DIR = path.resolve(__dirname, '../../screenshots/vehicle-allocation');
@@ -110,6 +109,7 @@ async function selectFirstDropdownResult(page, label, searchText) {
 }
 
 async function processSelectionInvoice(page) {
+    const invoiceData = require('../../test-data/allocation/vehicleallocationdata');
     const invoices = invoiceData.invoiceData;
     const l = vaLocators(page);
     try {
