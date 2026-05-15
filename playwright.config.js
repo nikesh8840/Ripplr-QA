@@ -12,6 +12,9 @@ for (const arg of process.argv) {
   }
 }
 
+// When running with --headed, slow every action by 600 ms so you can follow
+// what the test is doing in the browser without adding manual sleeps to tests.
+const HEADED = process.argv.includes('--headed');
 
 export default defineConfig({
   timeout: 100000,
@@ -19,6 +22,7 @@ export default defineConfig({
   testDir: './tests',
   use: {
     headless: true,
+    slowMo: HEADED ? 600 : 0,
     baseURL: process.env.BASE_URL || 'http://localhost:3000',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',

@@ -179,6 +179,7 @@ const ORDERS_BRAND_MAP = {
     'huls':      { 'a': 'bl.csv', 'b': 'sr.csv', 'c': 's.csv', _folder: 'Orders/huls' },
     'nestle':    { 'a': 'ms3.csv', 'b': 'bl3.csv', 'c': 'ss3.csv', _folder: 'Orders/nesl' },
     'snpr':      { 'a': 'sunpure.csv', _folder: 'Orders/snpr' },
+    'snprgt':    { 'a': 'snprgt.csv', _folder: 'Orders/snprgt' },
     'mrco':      { 'a': 'mrco.csv', _folder: 'Orders/mrco' },
 };
 

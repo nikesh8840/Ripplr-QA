@@ -1,6 +1,6 @@
 const { Uploadfile } = require('../pages/Aupload.page');
 const config = require('../config/base.config');
-const { incrementSrnInPdf, replaceInvoiceNumbersInPdf } = require('./pdfUtils');
+const { incrementSrnInPdf, replaceInvoiceNumbersInPdf, incrementReturnOrderRefInPdf } = require('./pdfUtils');
 const { incrementSalesReturnNoInPdf } = require('./pdfUtilsColumnSrn');
 const pmBrandConfig = require('../config/ProductMaster');
 const { incrementBillNumbers, syncInvoiceNumbers, recalculateGrossAmount, randomizeLastColumn, refreshDatesWithin15Days } = require('./dataUtils');
@@ -175,6 +175,20 @@ async function returnRequestPdfUpload(page, baseURL, FC, Brand, filePaths) {
     return result;
 }
 
+// Helper for Brit Return Request PDF upload.
+// Increments "Return Order With Reference" value before uploading.
+async function returnRequestPdfUploadBrit(page, baseURL, FC, Brand, filePaths) {
+    for (const fp of filePaths) {
+        await incrementReturnOrderRefInPdf(fp);
+    }
+    const uploadfile = new Uploadfile(page);
+    await page.goto(baseURL);
+    const result = await uploadfile.UploadReturnRequestPdf(
+        config.credentials.username, config.credentials.password, FC, Brand, filePaths
+    );
+    return result;
+}
+
 // Helper for Return request pdf uploads where the PDF uses a "Sales Return No"
 // column header layout (Marico). Increments via the column-aware helper instead
 // of the URN/Salvage-Ref-No path used by returnRequestPdfUpload.
@@ -274,6 +288,10 @@ const SALES_ORDER_BRAND_CONFIG = {
         files:   ['sunpure.csv'],
         columns: ['Sales Invoice No'],
     },
+    'snprgt': {
+        files:   ['snprgt.csv'],
+        columns: ['Sales Invoice No'],
+    },
 };
 
 // Helper for Sales Order uploads from test-data/Orders/{brand}/
@@ -326,6 +344,7 @@ module.exports = {
     threeFileUploadWithIncrement,
     salesReturnBgrdMrcoWithIncrement,
     returnRequestPdfUpload,
+    returnRequestPdfUploadBrit,
     returnRequestPdfUploadColumnSrn,
     invoicePdfReUpload,
     grnUpload,

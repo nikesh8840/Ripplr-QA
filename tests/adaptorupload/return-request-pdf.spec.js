@@ -2,11 +2,15 @@ const { test, expect } = require('@playwright/test');
 const fs = require('fs');
 const path = require('path');
 const config = require('../../config/base.config');
-const { returnRequestPdfUpload, returnRequestPdfUploadColumnSrn } = require('../../utils/uploadTestHelper');
+const { returnRequestPdfUpload, returnRequestPdfUploadBrit, returnRequestPdfUploadColumnSrn } = require('../../utils/uploadTestHelper');
 
 // Brands whose Return Request PDF uses a "Sales Return No" column-header layout
 // instead of an inline SRN/URN/Salvage-Ref-No label. Brand-level, FC-agnostic.
 const COLUMN_SRN_BRANDS = new Set(['mrco']);
+
+// Brands whose Return Request PDF uses a "Return Order With Reference" field
+// instead of an inline SRN/URN label.
+const RETURN_ORDER_REF_BRANDS = new Set(['brit']);
 
 // Usage: npx playwright test tests/adaptorupload/return-request-pdf.spec.js --headed -g BTML-DBR
 // The -g flag filters by FCcode-BrandCode (e.g. BTML-DBR, MDPT-BRIT, MDPT-NESL, MSPT-DBR, BGRD-MRCO).
@@ -27,7 +31,11 @@ for (const fcBrand of fcBrandDirs) {
     test(`Upload ${fc.toUpperCase()}-${brand.toUpperCase()} Return request pdf - Down`, async ({ page }) => {
         test.setTimeout(300_000);
         const expiryPdf = path.join(folder, pdfFile);
-        const uploader = COLUMN_SRN_BRANDS.has(brand) ? returnRequestPdfUploadColumnSrn : returnRequestPdfUpload;
+        const uploader = COLUMN_SRN_BRANDS.has(brand)
+            ? returnRequestPdfUploadColumnSrn
+            : RETURN_ORDER_REF_BRANDS.has(brand)
+                ? returnRequestPdfUploadBrit
+                : returnRequestPdfUpload;
         const result = await uploader(
             page, config.baseURLpreprod, fc, brand, [expiryPdf]
         );

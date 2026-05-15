@@ -14,11 +14,11 @@ const { simpleUpload, singleFileUpload, fcBrandUpload, singleFileUploadAPXWithIn
 //     expect(result).toBeTruthy();
 // });
 
-// test('Upload salesOrder file - Nothing', async ({ page }) => {
-//     test.setTimeout(180000);
-//     const result = await singleFileUploadAPXWithIncrement(page, config.baseURLpreprod, 'Sales Order', 'nothing', 'UploadSinglefileforerhsNTNG', 'Doc. No.');
-//     expect(result).toBeTruthy();
-// });
+test('Upload salesOrder file - Nothing', async ({ page }) => {
+    test.setTimeout(180000);
+    const result = await singleFileUploadAPXWithIncrement(page, config.baseURLpreprod, 'Sales Order', 'nothing', 'UploadSinglefileforerhsNTNG', 'Doc. No.');
+    expect(result).toBeTruthy();
+});
 
 // test('Upload salesOrder file - Samsung', async ({ page }) => {
 //     const result = await singleFileUpload(page, config.baseURL43, 'Sales Order', 'salesorderSamsung', 'UploadSinglefileforermkSMSNG');

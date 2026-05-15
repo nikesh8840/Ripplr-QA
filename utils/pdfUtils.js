@@ -281,4 +281,86 @@ async function replaceInvoiceNumbersInPdf(brand) {
     return pdfPath;
 }
 
-module.exports = { incrementSrnInPdf, replaceInvoiceNumbersInPdf };
+/**
+ * Increments the "Return Order With Reference" numeric value inside a Brit
+ * Return Request PDF.
+ *
+ * The PDF uses SAP hex-encoded text: digits 0–9 are stored as glyph IDs
+ * 0x0083–0x008C respectively inside <hex> Tj commands. A 10-digit reference
+ * number is therefore exactly 10 consecutive 4-hex-char pairs all in the
+ * range 008[3-9A-C] (case-insensitive). This function finds every such
+ * sequence across all compressed streams and increments each by 1.
+ *
+ * Uses a sidecar .rorstate file to track last-written values.
+ * Kept isolated so existing SRN/Salvage flows are unaffected.
+ */
+async function incrementReturnOrderRefInPdf(filePath) {
+    const buf = fs.readFileSync(filePath);
+
+    const pdfDoc = await PDFDocument.load(buf);
+    const { context } = pdfDoc;
+
+    // SAP font encoding: glyph 0x0083 = '0', 0x0084 = '1', ..., 0x008C = '9'
+    const DIGIT_BASE = 0x0083;
+
+    const decodeHexRef = (hexStr) =>
+        (hexStr.match(/.{4}/g) || []).map(p => (parseInt(p, 16) - DIGIT_BASE).toString()).join('');
+
+    const encodeRef = (numStr) =>
+        numStr.split('').map(d => (DIGIT_BASE + parseInt(d)).toString(16).padStart(4, '0').toUpperCase()).join('');
+
+    // Matches any hex Tj whose last 10 groups are SAP digit glyphs.
+    // Group 1 = non-digit hex prefix (may be empty, e.g. label glyphs like "Return Order With Reference :")
+    // Group 2 = exactly 10 SAP digit glyph pairs
+    const refPattern = /<([0-9A-Fa-f]*?)((?:008[3-9A-Ca-c]){10})>\s*Tj/g;
+
+    const newRefs = [];
+
+    for (const [ref, obj] of context.enumerateIndirectObjects()) {
+        if (!(obj instanceof PDFRawStream)) continue;
+        const filter = obj.dict.get(PDFName.of('Filter'));
+        if (!filter || !filter.toString().includes('FlateDecode')) continue;
+
+        let content;
+        try {
+            content = zlib.inflateSync(Buffer.from(obj.contents)).toString('binary');
+        } catch (e) { continue; }
+
+        if (!refPattern.test(content)) { refPattern.lastIndex = 0; continue; }
+        refPattern.lastIndex = 0;
+
+        let newContent = content;
+        let modified = false;
+        let m;
+        while ((m = refPattern.exec(content)) !== null) {
+            const prefix = m[1];
+            const oldHex = m[2];
+            const decoded = decodeHexRef(oldHex);
+            if (decoded.includes('NaN') || decoded.length !== 10) continue;
+
+            const incremented = String(parseInt(decoded, 10) + 1).padStart(10, '0');
+            const newHex = encodeRef(incremented);
+
+            console.log(`[pdfUtils] Return Order Ref: ${decoded} → ${incremented}`);
+            newRefs.push(incremented);
+
+            newContent = newContent.replace('<' + prefix + oldHex + '>', '<' + prefix + newHex + '>');
+            modified = true;
+        }
+        refPattern.lastIndex = 0;
+
+        if (modified) {
+            const newCompressed = zlib.deflateSync(Buffer.from(newContent, 'binary'));
+            obj.dict.set(PDFName.of('Length'), PDFNumber.of(newCompressed.length));
+            context.assign(ref, PDFRawStream.of(obj.dict, newCompressed));
+        }
+    }
+
+    if (newRefs.length === 0) throw new Error(`No "Return Order With Reference" value found in PDF: ${filePath}`);
+
+    const pdfBytes = await pdfDoc.save();
+    fs.writeFileSync(filePath, pdfBytes);
+    return newRefs;
+}
+
+module.exports = { incrementSrnInPdf, replaceInvoiceNumbersInPdf, incrementReturnOrderRefInPdf };

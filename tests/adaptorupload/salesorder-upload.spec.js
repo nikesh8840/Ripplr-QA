@@ -16,7 +16,8 @@ const { FC_CODES } = require('../../utils/fcbrands');
 // npx playwright test tests/adaptorupload/salesorder-upload.spec.js --headed -g BGRD-MRCO
 // npx playwright test tests/adaptorupload/salesorder-upload.spec.js --headed -g MDPT-NESL
 // npx playwright test tests/adaptorupload/salesorder-upload.spec.js --headed -g BGRD-SNPR
-// For brands without prefix conflicts (MRCO, NESL, SNPR) quotes are optional
+// npx playwright test tests/adaptorupload/salesorder-upload.spec.js --headed -g BGRD-SNPRGT
+// For brands without prefix conflicts (MRCO, NESL, SNPR, SNPRGT) quotes are optional
 
 
 const brands = Object.keys(SALES_ORDER_BRAND_CONFIG);

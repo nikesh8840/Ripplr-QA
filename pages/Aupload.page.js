@@ -21,22 +21,24 @@ exports.Uploadfile = class Uploadfile {
     async _login(username, password) {
         const login = loginLocators(this.page);
         // Skip login if already authenticated (login form not visible)
-        const needsLogin = await login.usernameInput.isVisible({ timeout: 3000 }).catch(() => false);
+        const needsLogin = await login.usernameInput.isVisible({ timeout: 1500 }).catch(() => false);
         if (!needsLogin) {
             console.log('Already logged in — skipping login step');
             return;
         }
-        await login.usernameInput.click();
         await login.usernameInput.fill(username);
-        await login.passwordInput.click();
         await login.passwordInput.fill(password);
         await login.loginButton.click();
+        // Wait for navigation away from login before proceeding
+        await this.page.waitForURL(u => !u.includes('login'), { timeout: 20000 }).catch(() => {});
     }
 
     async _openUploadModal(l, uploadtype) {
         await l.adapterUploadsLink.click();
         await l.uploadButton.click();
         await l.uploadCsvLabel.click();
+        await this.page.waitForTimeout(200);
+        await this.page.keyboard.type(uploadtype);
         await this.page.waitForTimeout(200);
         await l.docTypeTitle(uploadtype).click();
     }
@@ -514,11 +516,9 @@ exports.Uploadfile = class Uploadfile {
         await fileChooser.setFiles(filePaths);
 
         await l.submitButton.click();
-        await this.page.waitForTimeout(3000);
-
-        // PDF uploads don't use the CSV processing modal (.ant-tag-blue strong),
-        // so skip _searchAndVerify. Just confirm the modal closed after submit.
-        const modalStillOpen = await l.submitButton.isVisible({ timeout: 2000 }).catch(() => false);
+        // Wait for modal to close rather than sleeping a fixed duration
+        await this.page.locator('.ant-modal-wrap').waitFor({ state: 'hidden', timeout: 15000 }).catch(() => {});
+        const modalStillOpen = await l.submitButton.isVisible({ timeout: 1000 }).catch(() => false);
         if (modalStillOpen) {
             console.log('Return request PDF modal still open — waiting extra');
             await this.page.waitForTimeout(3000);
